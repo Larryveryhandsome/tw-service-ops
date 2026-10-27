@@ -288,7 +288,7 @@ def apply(con, topic, ans, who):
     return ''
 
 HOURLY_TOPIC = '陪玩陪讀、私人管家開放線上預約'
-HOURLY_TASK = 'tas-ed3cfd4baf78'
+HOURLY_TASK = ''   # 原系統用來對應某一筆排程任務的編號；開源版不寫死，空白＝不比對
 
 def hourly_lines(con, ans, who):
     """「先不要開」→ 維持關閉；否則讀出每小時價格（「兩個都開 400」「陪玩 400、管家 450」）→ 開通那條業務線。讀不出價格就不動、回空字串（負責人會看到答案）。"""
