@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>示範商城｜服務團隊在用的耗材</title>
+<meta name="description" content="示範服務店的服務團隊實際在用的耗材：浴室水垢、廚房油污、磁磚地面。照問題找，買對、用對；官方 LINE 一樣能點選購買。">
+<link rel="icon" href="/brand-favicon-64.png">
+<style>
+  :root { --brand: #6B5A4E; --cream: #FAF7F2; --ink: #1D1D1F; --sub: #6E6E73; --line: #06C755; --soft: #EFE9E1; --ok: #2E7D32; --warn: #B45309; --bad: #C62828; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--cream); color: var(--ink); font: 16px/1.6 -apple-system, BlinkMacSystemFont, "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif; overflow-x: hidden; }
+  a { color: var(--brand); }
+  button { font: inherit; cursor: pointer; }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 18px 120px; }
+  .nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 0; }
+  .nav .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); font-weight: 700; white-space: nowrap; }
+  .nav .logo img { height: 24px; }
+  .nav .right { display: flex; gap: 8px; align-items: center; }
+  .pillbtn { border: 1.5px solid var(--brand); color: var(--brand); background: #fff; border-radius: 999px; padding: 8px 14px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+  @media (max-width: 400px) { .pillbtn { padding: 7px 11px; font-size: 14px; } .nav .logo img { height: 20px; } }
+  .cartbtn { position: relative; background: var(--brand); color: #fff; border: 0; }
+  .badge { background: #fff; color: var(--brand); border-radius: 999px; min-width: 20px; height: 20px; font-size: 12px; display: inline-grid; place-items: center; padding: 0 6px; }
+  .hero { padding: 28px 0 8px; }
+  .hero h1 { font-size: clamp(28px, 6vw, 44px); line-height: 1.15; margin: 0 0 10px; }
+  .hero p { color: var(--sub); margin: 0; max-width: 620px; }
+  .who { margin-top: 14px; display: inline-block; background: #fff; border-radius: 999px; padding: 6px 14px; font-size: 14px; color: var(--ok); font-weight: 600; }
+  .chips { display: flex; gap: 8px; overflow-x: auto; padding: 18px 0 6px; scrollbar-width: none; }
+  .chips::-webkit-scrollbar { display: none; }
+  .chip { flex: none; border: 1px solid #E2DBD1; background: #fff; border-radius: 999px; padding: 8px 16px; color: var(--ink); }
+  .chip[aria-pressed="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 14px; margin-top: 12px; }
+  .card { background: #fff; border-radius: 20px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 1px 2px rgba(0,0,0,.04); }
+  .pic { aspect-ratio: 1 / 1; background: linear-gradient(135deg, #F3EDE4, #E6DCCD); display: grid; place-items: center; font-size: 64px; cursor: pointer; border: 0; width: 100%; padding: 0; }
+  .pic img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .body { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+  .body h3 { margin: 0; font-size: 18px; }
+  .body .solves { color: var(--sub); font-size: 14px; margin: 0; flex: 1; }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tag { font-size: 12px; background: var(--soft); color: var(--brand); border-radius: 999px; padding: 2px 10px; }
+  .price { font-size: 20px; font-weight: 700; }
+  .price small { font-size: 12px; font-weight: 600; color: var(--ok); margin-left: 6px; }
+  .stock { font-size: 13px; }
+  .stock.low { color: var(--warn); } .stock.out { color: var(--bad); }
+  .row { display: flex; gap: 8px; align-items: center; }
+  .step { display: inline-flex; align-items: center; border: 1px solid #E2DBD1; border-radius: 999px; overflow: hidden; }
+  .step button { border: 0; background: #fff; width: 44px; height: 44px; font-size: 18px; }
+  .step span { min-width: 28px; text-align: center; font-weight: 600; }
+  .add { flex: 1; border: 0; background: var(--brand); color: #fff; border-radius: 999px; min-height: 44px; font-weight: 700; }
+  .add:disabled { background: #C9C2B8; }
+  .link { background: none; border: 0; color: var(--brand); padding: 0; text-decoration: underline; font-size: 14px; text-align: left; }
+  section.info { margin-top: 40px; }
+  section.info h2 { font-size: 22px; margin: 0 0 10px; }
+  .box { background: #fff; border-radius: 18px; padding: 18px 20px; }
+  .box p { margin: 0 0 8px; color: var(--sub); }
+  footer { margin-top: 40px; color: var(--sub); font-size: 14px; line-height: 1.8; border-top: 1px solid #E5E0D8; padding-top: 18px; }
+  .sheet-bg { position: fixed; inset: 0; background: rgba(0,0,0,.35); z-index: 40; }
+  .sheet { position: fixed; left: 0; right: 0; bottom: 0; max-height: 92vh; overflow: auto; background: var(--cream); border-radius: 22px 22px 0 0; z-index: 41; padding: 18px 18px calc(24px + env(safe-area-inset-bottom, 0px)); }
+  @media (min-width: 760px) { .sheet { left: 50%; transform: translateX(-50%); width: 640px; bottom: 24px; border-radius: 22px; max-height: 88vh; } }
+  .sheet h2 { margin: 4px 0 12px; font-size: 22px; }
+  .x { float: right; border: 0; background: #fff; border-radius: 999px; width: 44px; height: 44px; font-size: 18px; }
+  .kv { margin: 10px 0 0; }
+  .kv dt { font-weight: 700; margin-top: 12px; }
+  .kv dd { margin: 4px 0 0; color: #3A3A3C; white-space: pre-wrap; }
+  .line { display: flex; justify-content: space-between; gap: 10px; padding: 10px 0; border-bottom: 1px solid #E5E0D8; align-items: center; }
+  .total { display: flex; justify-content: space-between; font-size: 20px; font-weight: 700; padding: 14px 0 6px; }
+  .field { display: block; margin-top: 12px; font-size: 14px; color: var(--sub); }
+  .field input, .field textarea { display: block; width: 100%; margin-top: 4px; border: 1px solid #DDD5CA; border-radius: 12px; padding: 11px 12px; font: inherit; background: #fff; color: var(--ink); }
+  .opt { display: flex; gap: 10px; align-items: center; background: #fff; border-radius: 12px; padding: 12px; margin-top: 8px; border: 1.5px solid transparent; }
+  .opt:has(input:checked) { border-color: var(--brand); }
+  .go { width: 100%; margin-top: 16px; border: 0; background: var(--brand); color: #fff; border-radius: 999px; height: 50px; font-weight: 700; font-size: 17px; }
+  .go:disabled { background: #C9C2B8; }
+  .err { color: var(--bad); margin-top: 10px; min-height: 1em; }
+  .note { font-size: 13px; color: var(--sub); }
+  .chk { display: block; font-size: 14px; color: var(--sub); }
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 14px 0; }
+  .steps div { text-align: center; font-size: 13px; padding: 10px 4px; border-radius: 12px; background: #fff; color: var(--sub); }
+  .steps div.on { background: var(--ok); color: #fff; font-weight: 700; }
+  .steps div.cancel { background: var(--bad); color: #fff; }
+  .empty { text-align: center; color: var(--sub); padding: 40px 0; }
+  .btn-line { display: inline-flex; align-items: center; gap: 8px; background: var(--line); color: #fff; border-radius: 999px; padding: 12px 20px; font-weight: 700; text-decoration: none; }
+  .linebox { border: 2px solid var(--line); margin: 14px 0; }
+  .lb-t { color: var(--ink); font-weight: 800; font-size: 17px; }
+  .qrwrap { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+  .qrwrap > div { flex: 1 1 220px; }
+  .qr { width: 200px; height: 200px; max-width: 100%; background: #fff; padding: 8px; border-radius: 12px; border: 1px solid #ddd; flex: none; }
+  .lcode { font-family: Consolas, 'Courier New', monospace; font-size: 17px; background: #f4f4f4; padding: 4px 8px; border-radius: 6px; user-select: all; word-break: break-all; }
+</style>
+</head>
+<body>
+<div class="wrap" id="app"><p class="empty">載入中…</p></div>
+<div class="sheet-bg" id="bg" hidden></div>
+<div class="sheet" id="detail" hidden></div>
+<div class="sheet" id="cart" hidden>
+  <button class="x" type="button" data-close="cart" aria-label="關閉">✕</button>
+  <h2>購物車</h2>
+  <div id="cartItems"></div>
+  <form id="co" novalidate>
+    <div id="dlv"></div>
+    <label class="field">稱呼<input id="nm" autocomplete="name" maxlength="30" placeholder="例如：王小姐"></label>
+    <label class="field">手機<input id="ph" inputmode="tel" autocomplete="tel" maxlength="20" placeholder="0900-000-000"></label>
+    <label class="field">備註（選填）<textarea id="nt" rows="2" maxlength="200" placeholder="例如：方便取貨的時間"></textarea></label>
+    <p class="note" id="terms"></p>
+    <button class="go" id="go" type="submit">送出訂單</button>
+    <p class="err" id="err"></p>
+  </form>
+</div>
+<script src="/pdc.js?v=20261019a"></script>
+<script src="/draft.js?v=20261013a"></script>
+<script src="/mall.js?v=20261019a"></script>
+<script src="/demo-banner.js"></script>
+</body>
+</html>

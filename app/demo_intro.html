@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>店家營運中樞（示範）｜預約制、派人服務的店家都適用</title>
+<style>
+:root{--bg:#f6f4ef;--card:#fff;--ink:#1d1c1a;--mut:#6f6b62;--line:#e4dfd3;--acc:#0b7a5c;--acc2:#e9f5f0;--warn:#b4561b;--warn2:#fbefe6}
+@media (prefers-color-scheme:dark){:root{--bg:#141413;--card:#1f1e1c;--ink:#f1efe9;--mut:#aaa59a;--line:#34322e;--acc:#43c59e;--acc2:#16332a;--warn:#f0a36a;--warn2:#36261a;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.7 -apple-system,"Noto Sans TC","Microsoft JhengHei",sans-serif;padding:0 16px}
+main{max-width:980px;margin:auto;padding-block:36px 56px}
+.kick{color:var(--acc);font-weight:700;font-size:14px;margin:0 0 6px}
+h1{font-size:clamp(27px,5.4vw,42px);line-height:1.25;margin:0 0 12px}
+.lead{color:var(--mut);font-size:17px;margin:0 0 18px;max-width:700px}
+.who{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 22px;padding:0;list-style:none}
+.who li{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px 12px;font-size:14px}
+.cta{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:30px}
+a.btn{display:inline-block;text-decoration:none;border-radius:12px;padding:12px 18px;font-weight:700}
+a.p{background:var(--acc);color:#fff}a.g{border:1px solid var(--line);color:var(--ink);background:var(--card)}
+.sum{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));gap:10px;margin-bottom:8px}
+.sum div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;font-size:15px}
+.sum b{display:block;font-size:16px}
+h2{font-size:22px;margin:36px 0 6px}
+.h2s{color:var(--mut);margin:0 0 14px;font-size:15px}
+.rows{display:grid;gap:12px}
+.row{display:grid;grid-template-columns:150px 1fr 1fr;background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+@media(max-width:760px){.row{grid-template-columns:1fr}}
+.row>div{padding:14px 16px}
+.row .t{font-weight:800;font-size:17px;display:flex;align-items:center;gap:8px}
+.row .b{background:var(--warn2)}.row .a{background:var(--acc2)}
+.row small{display:block;font-weight:700;font-size:12px;letter-spacing:.04em;margin-bottom:4px}
+.row .b small{color:var(--warn)}.row .a small{color:var(--acc)}
+.row ul{margin:0;padding-left:18px}.row li{margin:3px 0}
+.go{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.go a{font-size:14px;font-weight:700;color:var(--acc);text-decoration:none;border:1px solid var(--acc);border-radius:999px;padding:2px 10px;background:var(--card)}
+ol{padding-left:22px;margin:0}ol li{margin:8px 0}
+ol a{color:var(--acc);font-weight:700}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+footer{margin-top:36px;padding:20px;border-radius:14px;background:var(--acc);color:#fff;text-align:center;font-size:17px}
+footer b{font-size:20px}
+.note{color:var(--mut);font-size:13px;margin-top:16px}
+</style>
+</head>
+<body>
+<main>
+<p class="kick">給「預約制、要派人出去服務」的店家老闆</p>
+<h1>接預約、排班、派人、對帳，<br>不再靠 LINE 群組和 Excel 硬撐</h1>
+<p class="lead">客人線上自己選項目約時間，你確認報價；排好的班自動變工單，派給有空的人；人員在手機打卡拍照回報；月底帳單、薪資照完成紀錄整理好。下面是同一套系統的示範，資料全部是虛構的，可以隨便點。</p>
+<ul class="who"><li>到府維修</li><li>美容美髮</li><li>家教／課程</li><li>搬家</li><li>汽機車保養</li><li>到府服務</li><li>工作室</li><li>其他預約制服務</li></ul>
+<div class="cta"><a class="btn p" href="/enter?as=admin">直接試玩老闆畫面 ›</a><a class="btn g" href="/book">看客人怎麼線上預約</a><a class="btn g" href="/enter?as=worker">看服務人員手機畫面</a></div>
+<div class="sum">
+  <div><b>客人</b>線上選項目、看報價、確認</div>
+  <div><b>老闆／客服</b>確認報價、排班、派工</div>
+  <div><b>服務人員</b>手機接單、打卡、拍照回報</div>
+  <div><b>帳務</b>月結帳單、收款、人員薪資</div>
+</div>
+
+<h2>傳統做法 vs. 用系統之後</h2>
+<p class="h2s">每一列右邊都是示範裡真的有的畫面，點按鈕就能看到。實際效果依各店流程而定，原則上需要依你的作法調整設定。</p>
+<div class="rows">
+  <div class="row"><div class="t">① 接詢問與報價</div>
+    <div class="b"><small>傳統做法的痛點</small><ul><li>客人在 LINE、電話一直問「多少錢」「哪天有空」，同一套說明每天講好幾次</li><li>報價寫在對話裡，忙起來漏回、報錯價，事後也查不到當初報多少</li></ul></div>
+    <div class="a"><small>系統的優化方案</small><ul><li>客人在預約頁自己選服務項目、數量、日期時段，系統依單價先試算</li><li>報價進老闆的「報價」清單，確認後才傳出；客人用網址看正式報價單、線上確認，原則上都留有紀錄</li></ul>
+      <div class="go"><a href="/book">客人預約頁</a><a href="/enter?as=admin&amp;go=quotes">老闆：報價清單</a><a href="/q/demo-quote-0001">客人看到的報價單</a></div></div></div>
+
+  <div class="row"><div class="t">② 預約排程</div>
+    <div class="b"><small>傳統做法的痛點</small><ul><li>行程記在紙本、白板或老闆腦袋裡，人一多就重複約、記錯時間</li><li>客人要改時間，只能來回傳訊息，改完還要記得通知現場人員</li></ul></div>
+    <div class="a"><small>系統的優化方案</small><ul><li>客人確認報價後自動變成工單，排班頁一次看每天每場的時間、地址、人員</li><li>客人可以從網址自己申請改時間，送回店家確認，確認前原本預約照常有效</li></ul>
+      <div class="go"><a href="/enter?as=admin&amp;go=schedule">老闆：排班</a><a href="/enter?as=admin&amp;go=inquiries">老闆：預約需求</a></div></div></div>
+
+  <div class="row"><div class="t">③ 派工與臨時請假</div>
+    <div class="b"><small>傳統做法的痛點</small><ul><li>一場一場打電話、傳訊息問誰有空，問完還要記誰答應了</li><li>有人臨時請假，老闆整天都在找人補，客人那邊也不知道狀況</li></ul></div>
+    <div class="a"><small>系統的優化方案</small><ul><li>派工頁列出還缺人的工作，依人員的服務區域、可排時間挑人，對方在手機上接受或婉拒</li><li>人員在手機回報可排時間；有人臨時請假（正式版從 LINE 回報），那一場會回到「待補人」，派工頁一眼看到缺口</li></ul>
+      <div class="go"><a href="/enter?as=admin&amp;go=dispatch">老闆：派工</a><a href="/enter?as=admin&amp;go=workers">老闆：人員名單</a><a href="/enter?as=worker">人員：可排時間</a></div></div></div>
+
+  <div class="row"><div class="t">④ 現場回報與照片</div>
+    <div class="b"><small>傳統做法的痛點</small><ul><li>照片散在每個人自己的手機和群組，客人有疑問時翻不到</li><li>幾點到、幾點走、現場發生什麼事，都只能口頭說</li></ul></div>
+    <div class="a"><small>系統的優化方案</small><ul><li>人員手機開工作頁：到場打卡、上傳服務前照片和完成照片、完成回報、離場打卡</li><li>照片和工時跟著那一筆工單存檔，現場有狀況可以直接回報給店家</li></ul>
+      <div class="go"><a href="/enter?as=worker">人員手機畫面</a><a href="/enter?as=admin&amp;go=schedule">老闆：工單紀錄</a></div></div></div>
+
+  <div class="row"><div class="t">⑤ 客戶回訪與再次預約</div>
+    <div class="b"><small>傳統做法的痛點</small><ul><li>做完就沒下文，不記得哪位客人多久沒來、上次做了什麼</li><li>報價傳出去客人沒回，也沒人追</li></ul></div>
+    <div class="a"><small>系統的優化方案</small><ul><li>客戶資料集中：歷次服務、服務地點、付款方式、評價都在同一張卡</li><li>客人隨時從官網、預約頁再約；報價狀態一覽，看得出哪張還沒確認可以追</li></ul>
+      <div class="go"><a href="/enter?as=admin&amp;go=customers">老闆：客戶</a><a href="/home">客人：官網</a><a href="/book">客人：再次預約</a></div></div></div>
+
+  <div class="row"><div class="t">⑥ 月底對帳與人員薪資</div>
+    <div class="b"><small>傳統做法的痛點</small><ul><li>月底翻 LINE、Excel 一場一場對，月結客戶的帳單要手打</li><li>人員工時、場次靠自己記，薪資容易算錯、對不起來</li></ul></div>
+    <div class="a"><small>系統的優化方案</small><ul><li>結帳頁依完成的工單整理月結帳單、收款紀錄，開帳前每筆都能調整</li><li>人員薪資依登記的工時與場次彙整，人員在手機看得到自己的收入</li></ul>
+      <div class="go"><a href="/enter?as=admin&amp;go=billing">老闆：結帳</a><a href="/enter?as=finance&amp;go=billing">帳務角色畫面</a><a href="/enter?as=worker">人員：我的收入</a></div></div></div>
+
+  <div class="row"><div class="t">⑦ 老闆不在也掌握全局</div>
+    <div class="b"><small>傳統做法的痛點</small><ul><li>客服、帳務、現場都要問老闆，老闆一請假店就卡住</li><li>哪個地區客人多、人手夠不夠，只能憑感覺</li></ul></div>
+    <div class="a"><small>系統的優化方案</small><ul><li>老闆、客服、帳務、服務人員各自有權限，看自己需要的畫面</li><li>地區分布圖顯示各縣市客戶數與可支援人員，人手不足的地方標紅</li></ul>
+      <div class="go"><a href="/enter?as=admin&amp;go=map">老闆：地區分布</a><a href="/enter?as=staff">客服角色畫面</a></div></div></div>
+</div>
+
+<h2>3 分鐘看完的順序</h2>
+<div class="card"><ol>
+  <li><a href="/book">當客人</a>：選 1～2 個服務項目、挑日期時段、填地址，送出一筆預約（30 秒）</li>
+  <li><a href="/enter?as=admin&amp;go=quotes">當老闆</a>：在「報價」看到剛剛那筆，確認金額（30 秒）</li>
+  <li><a href="/q/demo-quote-0001">回到客人</a>：看正式報價單長什麼樣子（30 秒）</li>
+  <li><a href="/enter?as=admin&amp;go=schedule">當老闆</a>：看排班、<a href="/enter?as=admin&amp;go=dispatch">派工</a>，誰哪天去哪裡（45 秒）</li>
+  <li><a href="/enter?as=worker">當服務人員</a>：手機上的班表、可排時間、我的收入（30 秒）</li>
+  <li><a href="/enter?as=admin&amp;go=billing">月底</a>：看月結帳單與人員薪資怎麼整理（15 秒）</li>
+</ol>
+<p class="note">頂部綠色列可以隨時切換角色；亂點也沒關係：想重來就再執行一次 python app/seed_demo.py 重建示範資料。</p></div>
+
+<footer><b>需要客製化？加 LINE @812ibtir</b><br>留白事務所，林其衞｜依你的服務項目、價目、人員流程調整成你的版本</footer>
+<p class="note">示範版：所有姓名、電話、地址、金額都是虛構；不會發送任何 LINE、簡訊或金流。畫面上的試算與流程僅供參考，實際導入原則上依店家需求調整。</p>
+</main>
+<script src="/demo-banner.js"></script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>申請改時間</title>
+<link rel="stylesheet" href="/style.css?v=20261026a">
+<style>
+  html, body { overflow-x: hidden; }
+  .now { display: flex; gap: 14px; align-items: center; }
+  .now .big { font-size: 22px; font-weight: 700; }
+  .rule { background: #FFF6E5; border-radius: 12px; padding: 12px 14px; font-size: 14px; margin: 12px 0; }
+  .times { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 6px; }
+  .times label { display: block; text-align: center; border: 1px solid #ddd; border-radius: 10px; padding: 10px 0; font-size: 15px; cursor: pointer; }
+  .times input { display: none; }
+  .times input:checked + span { color: #fff; }
+  .times label:has(input:checked) { background: #6B5A4E; border-color: #6B5A4E; color: #fff; }
+  .end { margin-top: 8px; font-size: 14px; color: #6e6e73; }
+  .ok { text-align: center; padding: 28px 10px; }
+  .ok .ic { font-size: 54px; }
+  @media (max-width: 380px) { .times { grid-template-columns: repeat(3, 1fr); } }
+</style>
+</head>
+<body style="padding-bottom:40px">
+<main class="main" style="max-width:560px">
+  <div id="app"><p class="sub">載入中…</p></div>
+</main>
+<script src="/lineqr.js?v=20261026a"></script>
+<script src="/chg.js?v=20261026a"></script>
+<script src="/demo-banner.js"></script>
+</body>
+</html>

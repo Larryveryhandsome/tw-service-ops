@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>夥伴報到｜示範服務店</title>
+<link rel="icon" href="/brand-favicon-64.png">
+<link rel="stylesheet" href="/style.css?v=20261026a">
+</head>
+<body style="padding-bottom:40px">
+<main class="main" style="max-width:560px">
+  <img class="wm book-wm" src="/brand-wordmark.png" alt="DEMO 示範服務店">
+  <h1 class="headline">示範服務店夥伴報到</h1>
+  <p class="sub" id="hi">綁定一次，之後業主指定你、新的工作、前一天提醒都會自動傳到你的 LINE。</p>
+  <form id="jf" class="card" novalidate hidden>
+    <label for="who">你是哪一位？</label>
+    <select id="who"></select>
+    <div id="newBox" hidden><label for="name">你的名字</label><input id="name" autocomplete="name"></div>
+    <label for="phone">手機號碼</label><input id="phone" inputmode="tel" autocomplete="tel" placeholder="用來確認是你本人">
+    <label>可以接哪些地區？（可複選，整個縣市也可以）</label><div id="regions"></div>
+    <label>會哪些項目？（可複選）</label><div class="chips" id="skills"></div>
+    <label>通常哪些時間可以？（可複選）</label><div class="chips" id="avail"></div>
+    <button class="btn full" style="margin-top:22px" type="submit" id="go">完成報到</button>
+    <div id="err" class="err" role="alert"></div>
+  </form>
+  <div id="ok" class="card" hidden><h2 style="margin-top:0" id="okT">報到完成 🎉</h2><p id="okP"></p><p class="small">可以關掉這個頁面，回到 LINE 了。</p></div>
+  <div id="bad" class="card" hidden></div>
+</main>
+<script src="/pdc.js?v=20261019a"></script>
+<script src="/regions.js?v=20261009p"></script>
+<script src="/draft.js?v=20261013a"></script>
+<script src="/join.js?v=20261013dr"></script>
+<script src="/demo-banner.js"></script>
+</body>
+</html>

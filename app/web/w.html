@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>今天的工作｜示範服務店</title>
+<link rel="icon" href="/brand-favicon-64.png">
+<link rel="stylesheet" href="/style.css?v=20261026a">
+<style>/* 錯誤、上傳進度固定在畫面下方，按了哪裡都看得到 */
+#err:not(:empty),#prog:not(:empty){position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:60;margin:0;padding:14px 16px;border-radius:14px;box-shadow:0 6px 24px rgba(0,0,0,.18);font-size:16px;line-height:1.45}
+#err:not(:empty){background:#FFF1F0;color:#B3261E;border:1px solid #F3B4AE}#prog:not(:empty){background:#fff;color:#1d1d1f;border:1px solid #ddd}
+#err:not(:empty)~#prog:not(:empty){bottom:calc(84px + env(safe-area-inset-bottom))}
+</style>
+</head>
+<body style="padding-bottom:40px">
+<main class="main" style="max-width:560px">
+  <img class="wm book-wm" src="/brand-wordmark.png" alt="示範">
+  <div id="app"><p class="sub">載入中…</p></div>
+</main>
+<script src="/draft.js?v=20261013a"></script>
+<script src="/w.js?v=20261027a"></script>
+<script src="/demo-banner.js"></script>
+</body>
+</html>

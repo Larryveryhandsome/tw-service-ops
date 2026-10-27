@@ -1,0 +1,519 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<title>夥伴使用教學｜示範服務店</title>
+<link rel="icon" href="/brand-favicon-64.png">
+<!-- 夥伴使用教學（完整、圖多字少）。插圖全部是 HTML/CSS 畫的手機示意圖，按鈕文字照系統抄（line_bot.py／web/w.js／web/wp.js／richmenu2.py）。
+     範例一律假資料：王小姐、大安區中山路二段（地址只到路，門牌用 ○○）。?b=homeline 換成生活小幫手（wguide.js）。 -->
+<style>
+:root{
+  --bg:#f5f5f7;--tile:#fff;--ink:#1d1d1f;--ink2:#6e6e73;--ink3:#86868b;--line:#d2d2d7;--soft:#e8e8ed;
+  --brand:#6B5A4E;--on-brand:#fff;--brand-soft:rgba(107,90,78,.10);
+  --lb:#6B5A4E;--lbk:#6B5A4E;
+  --ok:#2E7D32;--warn:#C47F00;--bad:#C62828;--blue:#0071e3;--iblue:#0A84FF;--green:#34c759;
+  --frame:#1d1d1f;--chat:#C9D6E6;--lhbg:rgba(255,255,255,.6);--fx:#fff;--fxh:#FAF9F6;--fxb2:#EFEDE8;--fxline:#E5E5EA;
+  --me:#95ec69;--meink:#111;--web:#f5f5f7;--wtile:#fff;--rm:#FAF9F6;--chipbg:rgba(0,0,0,.07);
+  --font:"SF Pro TC","SF Pro Text","PingFang TC","Helvetica Neue","Noto Sans TC","Microsoft JhengHei",Helvetica,Arial,sans-serif;
+}
+html[data-brand="homeline"]{--brand:#B5677A;--brand-soft:rgba(181,103,122,.12)}
+@media (prefers-color-scheme:dark){
+  :root{--bg:#000;--tile:#1c1c1e;--ink:#f5f5f7;--ink2:#a1a1a6;--ink3:#8e8e93;--line:#3a3a3c;--soft:#2c2c2e;
+    --brand:#CDB6A5;--on-brand:#1c1c1e;--brand-soft:rgba(205,182,165,.14);--lbk:#CDB6A5;
+    --ok:#30d158;--warn:#ff9f0a;--bad:#ff453a;--blue:#0a84ff;--green:#30d158;
+    --frame:#48484a;--chat:#1E2733;--lhbg:rgba(0,0,0,.35);--fx:#2c2c2e;--fxh:#3a3a3c;--fxb2:#48484a;--fxline:#48484a;
+    --me:#2f7d32;--meink:#fff;--web:#000;--wtile:#1c1c1e;--rm:#1c1c1e;--chipbg:rgba(255,255,255,.1)}
+  html[data-brand="homeline"]{--brand:#E8A3B4;--brand-soft:rgba(232,163,180,.16)}
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.5 var(--font);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+.wrap{max-width:560px;margin:0 auto;padding:28px 16px calc(84px + env(safe-area-inset-bottom))}
+a{color:inherit}
+
+/* 頁首 */
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--brand);margin:0 0 6px}
+h1{font-size:38px;line-height:1.1;font-weight:800;margin:0 0 8px;letter-spacing:-.01em}
+.lead{font-size:18px;color:var(--ink2);margin:0 0 22px}
+
+/* 目錄 */
+.toc,.menu-card{background:var(--tile);border-radius:22px;padding:16px;margin:0 0 16px;scroll-margin-top:12px}
+.toc h2,.menu-card h2{font-size:15px;color:var(--ink3);margin:0 0 10px;font-weight:600}
+.toc ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.toc a{display:flex;gap:8px;align-items:center;padding:9px 10px;border-radius:14px;background:var(--bg);text-decoration:none;font-size:14px;font-weight:600;line-height:1.3;min-height:52px}
+.toc .n{flex:none;width:26px;height:26px;border-radius:50%;background:var(--brand);color:var(--on-brand);display:grid;place-items:center;font-size:13px;font-weight:800}
+
+/* 步驟卡 */
+.step{background:var(--tile);border-radius:24px;padding:20px 16px 18px;margin:0 0 16px;scroll-margin-top:12px}
+.sh{display:flex;align-items:center;gap:12px}
+.sn{flex:none;font-size:48px;line-height:1;font-weight:800;color:var(--brand);font-variant-numeric:tabular-nums;min-width:.62em;text-align:center}
+.sh h2{font-size:21px;line-height:1.3;margin:0;font-weight:700}
+.cap{margin:10px 2px 0;font-size:16px;line-height:1.6}
+.cap b{font-weight:700}
+
+/* 手機外框 */
+.phone{width:100%;max-width:300px;margin:16px auto 6px;border:7px solid var(--frame);border-radius:36px;background:var(--chat);overflow:hidden;box-shadow:0 10px 28px rgba(0,0,0,.12);color:var(--ink)}
+.sb{display:flex;justify-content:space-between;align-items:center;padding:8px 20px 3px;font-size:11px;font-weight:700}
+.si{display:inline-flex;align-items:flex-end;gap:1.5px}
+.si i{display:block;width:3px;background:currentColor;border-radius:1px}
+.si i:nth-child(1){height:4px}.si i:nth-child(2){height:6px}.si i:nth-child(3){height:8px}.si i:nth-child(4){height:10px}
+.si b{display:block;width:19px;height:10px;margin-left:5px;border:1.5px solid currentColor;border-radius:3px;padding:1px;background:linear-gradient(90deg,currentColor 72%,transparent 72%);background-clip:content-box}
+.lh{display:flex;align-items:center;gap:8px;padding:6px 14px 8px;font-size:14px;font-weight:700;background:var(--lhbg)}
+.lh .bk{font-size:20px;line-height:1;font-weight:400}
+.lh .t{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lh .x{font-size:13px;color:var(--ink3);font-weight:400}
+.chat{padding:10px 10px 12px;display:flex;flex-direction:column;gap:8px}
+
+/* LINE 卡片（flex） */
+.fx{background:var(--fx);border-radius:16px;overflow:hidden;font-size:12.5px;line-height:1.45;overflow-wrap:anywhere}
+.fx-h{background:var(--fxh);padding:12px 14px 10px}
+.fx-br{font-size:9px;font-weight:700;color:var(--ink3);letter-spacing:.03em}
+.fx-k{font-size:11px;font-weight:700;margin-top:6px;color:var(--lbk)}
+.fx-k.ok{color:var(--ok)}.fx-k.warn{color:var(--warn)}
+.fx-t{font-size:17px;font-weight:700;margin-top:2px;line-height:1.25}
+.fx-b{padding:10px 14px 4px;display:flex;flex-direction:column;gap:5px}
+.r{display:grid;grid-template-columns:4.3em 1fr;gap:8px;align-items:baseline}
+.r>span:first-child{color:var(--ink3)}
+.fx-n{margin:6px 14px 0;padding:9px 0 4px;border-top:1px solid var(--fxline);font-size:10.5px;color:var(--ink3)}
+.fx-f{padding:10px 12px 12px;display:flex;flex-direction:column;gap:7px}
+.b{position:relative;border-radius:8px;padding:8px 10px;text-align:center;font-weight:600;font-size:12.5px;background:var(--fxb2)}
+.b.p{background:var(--lb);color:#fff}
+.tag{display:inline-block;font-size:10px;font-weight:700;padding:1px 7px;border-radius:999px;background:rgba(196,127,0,.15);color:var(--warn);margin-left:4px;white-space:nowrap;vertical-align:1px}
+.tag.ok{background:rgba(46,125,50,.15);color:var(--ok)}
+.tag.blue{background:rgba(10,132,255,.15);color:var(--iblue)}
+.me{align-self:flex-end;background:var(--me);color:var(--meink);border-radius:16px 16px 4px 16px;padding:7px 11px;font-size:12.5px;max-width:80%}
+.bot{align-self:flex-start;background:var(--fx);border-radius:16px 16px 16px 4px;padding:8px 11px;font-size:12.5px;line-height:1.45;max-width:90%}
+.qr{display:flex;flex-wrap:wrap;gap:6px}
+.qr span{background:var(--fx);border:1px solid var(--iblue);color:var(--iblue);border-radius:999px;padding:4px 10px;font-size:11.5px;font-weight:600}
+.day{align-self:center;font-size:10.5px;color:var(--ink2);background:var(--chipbg);border-radius:999px;padding:2px 10px}
+
+/* 點這裡（脈動藍框＋手指） */
+.tap{position:relative;box-shadow:0 0 0 2.5px var(--iblue);animation:ping 1.8s ease-out infinite}
+.tap::after{content:"👆";position:absolute;right:8px;top:50%;transform:translateY(-28%);font-size:18px;line-height:1;pointer-events:none}
+@keyframes ping{0%{box-shadow:0 0 0 2.5px var(--iblue),0 0 0 2.5px rgba(10,132,255,.5)}100%{box-shadow:0 0 0 2.5px var(--iblue),0 0 0 10px rgba(10,132,255,0)}}
+
+/* 網頁示意（工作頁／主控板） */
+.phone.web{background:var(--web)}
+.wb{border-bottom:1px solid var(--line)}
+.wp{padding:12px 10px 14px;display:flex;flex-direction:column;gap:8px;font-size:12.5px;line-height:1.45;overflow-wrap:anywhere}
+.wh{font-size:21px;font-weight:800;line-height:1.15;margin:2px 2px 0}
+.ws{color:var(--ink2);font-size:11.5px;margin:0 2px 2px}
+.wl{font-size:15px;font-weight:700;margin:6px 2px 0}
+.wl .g{color:var(--ink2)}
+.wc{background:var(--wtile);border-radius:14px;padding:11px 12px}
+.kv{display:grid;grid-template-columns:3.4em 1fr;gap:4px 8px;margin:0}
+.kv dt{color:var(--ink2)}.kv dd{margin:0}
+.lnk{color:var(--blue);font-weight:600}
+.wst{display:flex;gap:10px;align-items:flex-start}
+.wst>div{flex:1;min-width:0}
+.wn{flex:none;width:24px;height:24px;border-radius:50%;background:var(--ink);color:var(--wtile);display:grid;place-items:center;font-weight:700;font-size:12px}
+.wst.done .wn{background:var(--green);color:#fff}.wst.done h4{color:var(--green)}
+.wst h4{margin:2px 0 6px;font-size:14px}
+.wbtn{position:relative;background:var(--blue);color:#fff;border-radius:999px;text-align:center;padding:9px 12px;font-weight:600;font-size:13px}
+.wbtn.sec{background:transparent;color:var(--blue);box-shadow:inset 0 0 0 1px var(--blue)}
+.wbtn.gray{background:var(--soft);color:var(--ink)}
+.wbtn.sec.tap{box-shadow:inset 0 0 0 1px var(--blue),0 0 0 2.5px var(--iblue)}
+.wbtns{display:flex;gap:6px}.wbtns>*{flex:1}
+.pbtn{position:relative;border:1.5px dashed var(--line);border-radius:12px;padding:12px;text-align:center;font-weight:600;color:var(--blue);background:rgba(0,113,227,.05)}
+.sm{font-size:11px;color:var(--ink2);margin:5px 0 0}
+.redt{color:var(--bad);font-weight:700;margin:0 0 5px}
+.ta{border:1px solid var(--line);border-radius:10px;padding:7px 8px;color:var(--ink3);font-size:11px;min-height:38px;margin:4px 0 8px}
+.pill{display:inline-block;font-size:10px;padding:1px 7px;border-radius:9px;background:var(--chipbg);margin-left:4px;font-weight:600;white-space:nowrap}
+.pill.ok{background:rgba(52,199,89,.16);color:#248a3d}.pill.bad{background:rgba(255,59,48,.13);color:#d70015}
+@media (prefers-color-scheme:dark){.pill.ok{color:#30d158}.pill.bad{color:#ff6961}}
+.money{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.money .v{font-size:17px;font-weight:800;white-space:nowrap}
+
+/* 可排時間月曆 */
+.mon{display:flex;justify-content:space-between;align-items:center;font-weight:700}
+.mon span{background:var(--soft);border-radius:999px;padding:1px 10px;font-weight:400}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:8px}
+.cal .h{text-align:center;font-size:10px;color:var(--ink3)}
+.cal i{font-style:normal;aspect-ratio:1;border:1px solid var(--line);border-radius:8px;background:var(--wtile);display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:700;font-size:11.5px;line-height:1.05;min-width:0}
+.cal i small{font-size:8px;font-weight:600}
+.cal i.f{background:var(--green);border-color:var(--green);color:#fff}
+.cal i.x{background:#ff3b30;border-color:#ff3b30;color:#fff}
+.cal i.now{outline:2.5px solid var(--iblue);outline-offset:1px}
+.fld{border:1px solid var(--line);border-radius:10px;padding:7px 8px;margin:4px 0 8px}
+
+/* 夥伴選單（圖文選單示意） */
+.rm{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:8px;background:var(--rm)}
+.rc{position:relative;background:var(--fx);border:1px solid var(--fxline);border-radius:12px;padding:8px 4px 7px;text-align:center;text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:2px;min-width:0;color:var(--ink)}
+.rc .ic{width:26px;height:26px;border-radius:50%;background:var(--lb);color:#fff;display:grid;place-items:center;font-weight:800;font-size:13px}
+.rc b{font-size:12px;line-height:1.25}
+.rc small{font-size:9px;color:var(--ink3);line-height:1.25}
+.rc.main{background:var(--lb);border-color:var(--lb);color:#fff}
+.rc.main .ic{background:#fff;color:var(--lb)}.rc.main small{color:#F2EDE8}
+.rc.tap::after{right:3px;top:3px;transform:none;font-size:16px}
+.menu-card .rm{border-radius:16px;padding:10px;gap:8px}
+.menu-card .rc{padding:12px 4px 10px;min-height:104px;justify-content:center}
+.menu-card .rc .ic{width:32px;height:32px;font-size:15px}
+.menu-card .rc b{font-size:14px}
+.menu-card .rc small{font-size:10.5px}
+.go{margin-top:3px;font-size:10.5px;font-weight:700;color:var(--brand)}
+.rc.main .go{color:#fff;opacity:.9}
+.hint{font-size:14px;color:var(--ink2);margin:10px 2px 0}
+
+/* 拍照標準 */
+.std{margin:14px 0 0;padding:14px;border-radius:18px;background:var(--bg)}
+.std h3{font-size:15px;margin:0 0 10px}
+.ba{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ba figure{margin:0}
+.ba figcaption{font-size:13px;font-weight:700;margin-top:6px;text-align:center}
+.pic{position:relative;aspect-ratio:3/4;border-radius:12px;overflow:hidden;background-color:#E8EDF1;
+  background-image:linear-gradient(#D3DBE2 1px,transparent 1px),linear-gradient(90deg,#D3DBE2 1px,transparent 1px);background-size:20px 20px}
+.pic::before{content:"";position:absolute;inset:7px;border:2px dashed rgba(255,255,255,.95);border-radius:8px;z-index:3}
+.hood{position:absolute;left:12%;right:12%;top:14%;height:32%;background:linear-gradient(#C3CAD0,#98A1A9);clip-path:polygon(30% 0,70% 0,100% 100%,0 100%)}
+.vent{position:absolute;left:10%;right:10%;top:46%;height:6%;background:#7B848C;border-radius:3px}
+.counter{position:absolute;left:0;right:0;bottom:0;height:24%;background:linear-gradient(#D9C6A5,#C2AD88)}
+.dirt{position:absolute;inset:0;z-index:2;background:
+  radial-gradient(circle at 36% 30%,rgba(110,72,25,.6) 0 6%,transparent 7%),radial-gradient(circle at 62% 38%,rgba(110,72,25,.5) 0 8%,transparent 9%),
+  radial-gradient(circle at 48% 44%,rgba(85,55,18,.55) 0 4.5%,transparent 5.5%),radial-gradient(circle at 26% 43%,rgba(110,72,25,.4) 0 5%,transparent 6%),
+  radial-gradient(circle at 72% 49%,rgba(85,55,18,.6) 0 3.5%,transparent 4.5%),radial-gradient(ellipse 22% 4% at 50% 87%,rgba(110,72,25,.45) 98%,transparent 100%)}
+.spark{position:absolute;z-index:2;font-size:16px;line-height:1}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.chips span{font-size:13px;padding:5px 10px;border-radius:999px;background:var(--tile);font-weight:600}
+.chips .yes{color:var(--ok)}.chips .no{color:var(--bad)}
+
+/* 頁尾、回目錄 */
+.end{text-align:center;padding:26px 16px 8px}
+.end .ic{font-size:40px;line-height:1}
+.end .t{font-size:22px;font-weight:800;margin:10px 0 4px}
+.end .s{font-size:14px;color:var(--ink3);margin:0}
+.totop{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom));background:var(--tile);color:var(--ink);border-radius:999px;padding:10px 15px;font-size:14px;font-weight:700;box-shadow:0 4px 16px rgba(0,0,0,.2);text-decoration:none;z-index:5}
+@media (prefers-color-scheme:dark){.totop{box-shadow:0 0 0 1px var(--line)}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.tap{animation:none}}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <header>
+    <p class="eyebrow" data-b="title">DEMO 示範服務店</p>
+    <h1>夥伴使用教學</h1>
+    <p class="lead">接單、打卡、拍照、請假、看收入，10 步看圖就會。</p>
+  </header>
+
+  <!-- 目錄 -->
+  <nav class="toc" id="toc" aria-label="目錄">
+    <h2>目錄・點一下跳過去</h2>
+    <ol>
+      <li><a href="#s1"><span class="n">1</span>加好友・應徵</a></li>
+      <li><a href="#s2"><span class="n">2</span>收到派工卡</a></li>
+      <li><a href="#s3"><span class="n">3</span>接單・看地址</a></li>
+      <li><a href="#s4"><span class="n">4</span>前一天提醒</a></li>
+      <li><a href="#s5"><span class="n">5</span>到場打卡拍照</a></li>
+      <li><a href="#s6"><span class="n">6</span>完工離場打卡</a></li>
+      <li><a href="#s7"><span class="n">7</span>狀況・請假</a></li>
+      <li><a href="#s8"><span class="n">8</span>可排時間</a></li>
+      <li><a href="#s9"><span class="n">9</span>班表・收入</a></li>
+      <li><a href="#s10"><span class="n">10</span><span data-b="contact">聯絡示範服務店</span></a></li>
+    </ol>
+  </nav>
+
+  <!-- 夥伴選單一覽（richmenu2.py WORKER_CELLS） -->
+  <section class="menu-card" aria-labelledby="mh">
+    <h2 id="mh">LINE 下方的夥伴選單</h2>
+    <nav class="rm" aria-label="夥伴選單六格">
+      <a class="rc main" href="#s5"><span class="ic">今</span><b>今天的工作</b><small>打卡・拍照</small><span class="go">看第 5 步 ›</span></a>
+      <a class="rc" href="#s9"><span class="ic">班</span><b>我的班表</b><small>邀請・已排的工作</small><span class="go">看第 9 步 ›</span></a>
+      <a class="rc" href="#s8"><span class="ic">可</span><b>可排時間</b><small>回報哪天可以</small><span class="go">看第 8 步 ›</span></a>
+      <a class="rc" href="#s7"><span class="ic">現</span><b>現場回報</b><small>加時・晚到・狀況</small><span class="go">看第 7 步 ›</span></a>
+      <a class="rc" href="#s9"><span class="ic">收</span><b>我的收入</b><small>本月場次・預估</small><span class="go">看第 9 步 ›</span></a>
+      <a class="rc" href="#s10"><span class="ic">聯</span><b data-b="contact">聯絡示範服務店</b><small>有問題直接留言</small><span class="go">看第 10 步 ›</span></a>
+    </nav>
+    <p class="hint">點格子，直接跳到那一步的教學。</p>
+  </section>
+
+  <!-- ① 加好友、應徵 -->
+  <section class="step" id="s1">
+    <div class="sh"><span class="sn">1</span><h2>加好友，應徵夥伴</h2></div>
+    <div class="phone" role="img" aria-label="示意圖：官方 LINE 歡迎卡按「我要應徵夥伴」，再按「開始填應徵資料」">
+      <div class="sb"><span>9:41</span><span class="si"><i></i><i></i><i></i><i></i><b></b></span></div>
+      <div class="lh"><span class="bk">‹</span><span class="t" data-b="full">示範服務店</span><span class="x">☰</span></div>
+      <div class="chat">
+        <div class="fx">
+          <div class="fx-h"><div class="fx-br" data-b="title">DEMO 示範服務店</div><div class="fx-k">歡迎加入 <span data-b="full">示範服務店</span> 👋</div><div class="fx-t">很高興認識您</div></div>
+          <div class="fx-b"><div>點一下，專人才能更快幫您：</div></div>
+          <div class="fx-f"><div class="b p">我要詢問服務</div><div class="b">線上估價・預約</div><div class="b tap">我要應徵夥伴</div></div>
+        </div>
+        <div class="me">我要應徵夥伴</div>
+        <div class="fx">
+          <div class="fx-h"><div class="fx-br" data-b="title">DEMO 示範服務店</div><div class="fx-k">應徵夥伴 🙋</div><div class="fx-t">約 3–5 分鐘填完</div></div>
+          <div class="fx-b"><div>點選可以接的地區、技能和時間（幾乎不用打字）。</div></div>
+          <div class="fx-f"><div class="b p tap">開始填應徵資料</div></div>
+        </div>
+      </div>
+    </div>
+    <p class="cap">👉 加官方 LINE 好友，按<b>「我要應徵夥伴」</b>→<b>「開始填應徵資料」</b>。</p>
+    <p class="cap">✅ 送出後選單換成夥伴選單，審核結果會用 LINE 通知你。</p>
+  </section>
+
+  <!-- ② 派工卡 -->
+  <section class="step" id="s2">
+    <div class="sh"><span class="sn">2</span><h2>收到派工卡，先按先得</h2></div>
+    <div class="phone" role="img" aria-label="示意圖：派工卡，地點只到路，按「我要接單」">
+      <div class="sb"><span>9:41</span><span class="si"><i></i><i></i><i></i><i></i><b></b></span></div>
+      <div class="lh"><span class="bk">‹</span><span class="t" data-b="full">示範服務店</span><span class="x">☰</span></div>
+      <div class="chat">
+        <div class="fx">
+          <div class="fx-h"><div class="fx-br" data-b="title">DEMO 示範服務店</div><div class="fx-k">新的工作・先按先得</div><div class="fx-t">11/6（五） 09:00–13:00</div></div>
+          <div class="fx-b">
+            <div class="r"><span>日期</span><span>11/6（五） 09:00–13:00</span></div>
+            <div class="r"><span>地點</span><span>臺北市大安區中山路二段<span class="tag">只到路／巷</span></span></div>
+            <div class="r"><span>類型</span><span>一般到府服務</span></div>
+            <div class="r"><span>時數</span><span>約 4 小時・缺 1 位</span></div>
+            <div class="r"><span>工具</span><span>用業主的工具（不用自備）</span></div>
+            <div class="r"><span>這場收入</span><span>約 ○○○ 元<span class="tag blue">只有你看得到</span></span></div>
+          </div>
+          <div class="fx-n">系統以按下的時間判定，先按先得。接單後 10 分鐘內可以按「臨時無法」取消。接單後就看得到完整地址和導航。</div>
+          <div class="fx-f"><div class="b p tap">我要接單</div><div class="b">這次不行</div><div class="b">看我的主控板</div></div>
+        </div>
+      </div>
+    </div>
+    <p class="cap">👉 按<b>「我要接單」</b>，先按先得；沒空按<b>「這次不行」</b>。</p>
+    <p class="cap">📍 接單前地點只到路／巷，接單後才看得到完整地址。</p>
+  </section>
+
+  <!-- ③ 接單成功 -->
+  <section class="step" id="s3">
+    <div class="sh"><span class="sn">3</span><h2>接單成功，看地址、開導航</h2></div>
+    <div class="phone" role="img" aria-label="示意圖：接單成功卡，有完整地址、開導航（精準定位）、臨時無法（10 分鐘內）">
+      <div class="sb"><span>9:41</span><span class="si"><i></i><i></i><i></i><i></i><b></b></span></div>
+      <div class="lh"><span class="bk">‹</span><span class="t" data-b="full">示範服務店</span><span class="x">☰</span></div>
+      <div class="chat">
+        <div class="me">我要接單</div>
+        <div class="fx">
+          <div class="fx-h"><div class="fx-br" data-b="title">DEMO 示範服務店</div><div class="fx-k ok">✅ 接單成功</div><div class="fx-t">11/6（五） 09:00–13:00</div></div>
+          <div class="fx-b">
+            <div class="r"><span>地址</span><span>臺北市大安區中山路二段○○號<span class="tag ok">完整地址</span></span></div>
+            <div class="r"><span>類型</span><span>一般到府服務</span></div>
+            <div class="r"><span>夥伴</span><span>（你的名字）</span></div>
+            <div class="r"><span>預估收入</span><span>約 ○○○ 元</span></div>
+          </div>
+          <div class="fx-n">進場方式、開門、現場聯絡會在客戶確認時間、排定後傳給你。前一天會再提醒。</div>
+          <div class="fx-f"><div class="b p">打開我的主控板</div><div class="b tap">開導航（精準定位）</div><div class="b">臨時無法（10 分鐘內）<span class="tag">⏱ 10 分鐘</span></div></div>
+        </div>
+      </div>
+    </div>
+    <p class="cap">🧭 接單後看得到完整地址，按<b>「開導航（精準定位）」</b>直接帶路。</p>
+    <p class="cap">⏱ 按錯或不行：<b>10 分鐘內</b>按<b>「臨時無法」</b>；超過就走第 7 步「臨時請假」。</p>
+  </section>
+
+  <!-- ④ 排定、前一天提醒、時間異動 -->
+  <section class="step" id="s4">
+    <div class="sh"><span class="sn">4</span><h2>排定＋前一天提醒</h2></div>
+    <div class="phone" role="img" aria-label="示意圖：明天的工作卡，有地址、進場、開門、現場聯絡，按「收到」；下面是工作時間已更新卡">
+      <div class="sb"><span>18:00</span><span class="si"><i></i><i></i><i></i><i></i><b></b></span></div>
+      <div class="lh"><span class="bk">‹</span><span class="t" data-b="full">示範服務店</span><span class="x">☰</span></div>
+      <div class="chat">
+        <div class="fx">
+          <div class="fx-h"><div class="fx-br" data-b="title">DEMO 示範服務店</div><div class="fx-k">明天的工作 🧹</div><div class="fx-t">11/6（五） 09:00–13:00</div></div>
+          <div class="fx-b">
+            <div class="r"><span>地區</span><span>臺北市大安區</span></div>
+            <div class="r"><span>地址</span><span>臺北市大安區中山路二段○○號</span></div>
+            <div class="r"><span>時數</span><span>約 4 小時</span></div>
+            <div class="r"><span>範圍</span><span>廚房、浴室、客廳</span></div>
+            <div class="r"><span>工具</span><span>用業主的工具（不用自備）</span></div>
+            <div class="r"><span>進場</span><span>大樓一樓找管理員登記<span class="tag ok">排定後才有</span></span></div>
+            <div class="r"><span>現場聯絡</span><span>王小姐（家人）📞</span></div>
+            <div class="r"><span>開門</span><span>業主親自開門（業主已確認會來開門 ✅）</span></div>
+          </div>
+          <div class="fx-n">到場先在工作頁打卡、拍服務前照片；做完拍完成照片再離場打卡，照片會自動傳給<span data-b="name">示範服務店</span>和業主。</div>
+          <div class="fx-f"><div class="b p">打卡・拍照（工作頁）</div><div class="b">開導航</div><div class="b tap">收到 👍</div><div class="b">臨時請假</div><div class="b">要買耗材</div></div>
+        </div>
+        <div class="day">時間有改的話 👇</div>
+        <div class="fx">
+          <div class="fx-h"><div class="fx-br" data-b="title">DEMO 示範服務店</div><div class="fx-k warn">工作時間已更新</div><div class="fx-t">11/7（六） 09:00–13:00</div></div>
+          <div class="fx-b">
+            <div class="r"><span>原本</span><span>11/6（五） 09:00–13:00</span></div>
+            <div class="r"><span>改為</span><span>11/7（六） 09:00–13:00</span></div>
+          </div>
+          <div class="fx-f"><div class="b p">收到，可以 ✅</div><div class="b">新時間不行</div></div>
+        </div>
+      </div>
+    </div>
+    <p class="cap">🔔 排定後、前一天 18:00 都會收到工作卡：進場、開門都在上面，看完按<b>「收到 👍」</b>。</p>
+    <p class="cap">🕑 時間改了：可以按<b>「收到，可以 ✅」</b>，不行按<b>「新時間不行」</b>。</p>
+  </section>
+
+  <!-- ⑤ 到場：打卡＋服務前照片 -->
+  <section class="step" id="s5">
+    <div class="sh"><span class="sn">5</span><h2>到場打卡，拍服務前</h2></div>
+    <div class="phone web" role="img" aria-label="示意圖：工作頁，按「我到了・定位打卡」，再按「拍照／選照片」拍服務前照片">
+      <div class="sb"><span>08:58</span><span class="si"><i></i><i></i><i></i><i></i><b></b></span></div>
+      <div class="lh wb"><span class="bk">✕</span><span class="t">工作頁</span></div>
+      <div class="wp">
+        <div class="wh">11/6 09:00–13:00</div>
+        <div class="ws">（你的名字）・一般到府服務・約 4 小時</div>
+        <div class="wc"><dl class="kv"><dt>地區</dt><dd>臺北市大安區</dd><dt>地址</dt><dd><b>臺北市大安區中山路二段○○號</b><br><span class="lnk">開導航 ›</span></dd><dt>開門</dt><dd>業主親自開門（到了按「請業主開門」）</dd></dl></div>
+        <div class="wc wst"><span class="wn">1</span><div><h4>到場打卡</h4>
+          <div class="wbtn tap">我到了・定位打卡</div>
+          <p class="sm">會記錄時間和位置；抓不到定位也能打卡（會標示）。</p>
+          <div class="wbtn sec" style="margin-top:7px">到門口了，請業主開門 🚪</div></div></div>
+        <div class="wc wst"><span class="wn">2</span><div><h4>服務前照片</h4>
+          <p class="redt">先拍服務前照片才能開工 👇</p>
+          <p class="sm" style="margin:0 0 6px">每個要服務的區域都拍一張</p>
+          <div class="pbtn tap">＋ 拍照／選照片</div></div></div>
+      </div>
+    </div>
+    <p class="cap">👉 選單<b>「今天的工作」</b>→<b>「打卡・拍照」</b>，到了按<b>「我到了・定位打卡」</b>。</p>
+    <p class="cap">📸 先拍<b>服務前照片</b>才能開工；要業主開門就按<b>「到門口了，請業主開門 🚪」</b>。</p>
+  </section>
+
+  <!-- ⑥ 完工：完成照片＋離場打卡 -->
+  <section class="step" id="s6">
+    <div class="sh"><span class="sn">6</span><h2>完工拍照，離場打卡</h2></div>
+    <div class="phone web" role="img" aria-label="示意圖：工作頁，拍完成照片，寫今天的狀況，按「完工・離場打卡」">
+      <div class="sb"><span>12:55</span><span class="si"><i></i><i></i><i></i><i></i><b></b></span></div>
+      <div class="lh wb"><span class="bk">✕</span><span class="t">工作頁</span></div>
+      <div class="wp">
+        <div class="wc wst done"><span class="wn">✓</span><div><h4>到場打卡</h4><p class="sm" style="margin:0">09:02 已到場</p></div></div>
+        <div class="wc wst done"><span class="wn">✓</span><div><h4>服務前照片</h4><p class="sm" style="margin:0">已傳 6 張</p></div></div>
+        <div class="wc wst"><span class="wn">3</span><div><h4>完成照片</h4>
+          <p class="sm" style="margin:0 0 6px">做完每個區域再拍一張；離場打卡後會自動傳給業主。</p>
+          <div class="pbtn tap">＋ 拍照／選照片</div></div></div>
+        <div class="wc wst"><span class="wn">4</span><div><h4>完工回報・離場打卡</h4>
+          <div class="ta">今天的狀況（缺用品、客戶交代、損壞⋯，沒有可空白）</div>
+          <div class="wbtn tap">完工・離場打卡</div>
+          <p class="sm">服務前、完成照片都要傳，才能離場打卡。</p></div></div>
+      </div>
+    </div>
+    <div class="std" role="group" aria-label="拍照標準">
+      <h3>📸 拍照標準：同一個位置、同一個角度</h3>
+      <div class="ba">
+        <figure><div class="pic" role="img" aria-label="服務前：抽風扇有油垢"><div class="hood"></div><div class="vent"></div><div class="counter"></div><div class="dirt"></div></div><figcaption>① 服務前</figcaption></figure>
+        <figure><div class="pic" role="img" aria-label="完工：同一個抽風扇、同一個角度，乾淨了"><div class="hood"></div><div class="vent"></div><div class="counter"></div><span class="spark" style="left:22%;top:20%">✨</span><span class="spark" style="right:20%;top:34%">✨</span><span class="spark" style="left:44%;bottom:30%">✨</span></div><figcaption>② 完工・站回同位置</figcaption></figure>
+      </div>
+      <div class="chips">
+        <span class="yes">✅ 每個區域都拍</span><span class="yes">✅ 光線夠、對焦清楚</span><span class="yes">✅ 對準髒的地方</span>
+        <span class="no">❌ 門牌、人臉、信件</span><span class="no">❌ 模糊、太暗</span>
+      </div>
+    </div>
+    <p class="cap">👉 站回同一個位置拍<b>完成照片</b>，寫一句狀況，按<b>「完工・離場打卡」</b>。</p>
+    <p class="cap">💰 <b>服務前、完成照片都要有，才會發這一場的薪資。</b></p>
+  </section>
+
+  <!-- ⑦ 現場回報、臨時請假 -->
+  <section class="step" id="s7">
+    <div class="sh"><span class="sn">7</span><h2>現場有狀況、要請假</h2></div>
+    <div class="phone" role="img" aria-label="示意圖：現場回報卡，選「需要加時」再選多久；臨時請假選原因">
+      <div class="sb"><span>11:40</span><span class="si"><i></i><i></i><i></i><i></i><b></b></span></div>
+      <div class="lh"><span class="bk">‹</span><span class="t" data-b="full">示範服務店</span><span class="x">☰</span></div>
+      <div class="chat">
+        <div class="me">現場回報</div>
+        <div class="fx">
+          <div class="fx-h"><div class="fx-br" data-b="title">DEMO 示範服務店</div><div class="fx-k warn">現場回報</div><div class="fx-t">11/6（五） 09:00–13:00</div></div>
+          <div class="fx-b"><div>現場遇到狀況，點一下就會通知管理層，處理好會在這裡告訴你。</div></div>
+          <div class="fx-f"><div class="b p tap">⏱ 需要加時</div><div class="b">🚗 下一場會晚到</div><div class="b">🧹 現場跟預期不一樣</div><div class="b">⚠️ 有東西損壞</div><div class="b">💬 其他狀況</div><div class="b">📵 這裡不能拍照</div></div>
+        </div>
+        <div class="bot">大約還需要多久？👇</div>
+        <div class="qr"><span>+30 分</span><span>+60 分</span><span>+90 分</span><span>+120 分</span></div>
+        <div class="day">不能去了？在工作卡按「臨時請假」👇</div>
+        <div class="bot">11/8（日） 13:00–17:00 要請假，請點選原因 👇（派單管理群會看到，並另外安排人）</div>
+        <div class="qr"><span>生病</span><span>家裡有事</span><span>交通問題</span><span>其他</span></div>
+      </div>
+    </div>
+    <p class="cap">🧹 掃不完、會晚到、有損壞：按選單<b>「現場回報」</b>，點一下管理層就知道。</p>
+    <p class="cap">🙏 不能去了：工作卡按<b>「臨時請假」</b>或打「請假」，點原因，盡量提早說。</p>
+  </section>
+
+  <!-- ⑧ 可排時間 -->
+  <section class="step" id="s8">
+    <div class="sh"><span class="sn">8</span><h2>每月回報可排時間</h2></div>
+    <div class="phone web" role="img" aria-label="示意圖：可排時間月曆，點日期切換整天、上午、下午、不行，按「儲存可排時間」">
+      <div class="sb"><span>9:41</span><span class="si"><i></i><i></i><i></i><i></i><b></b></span></div>
+      <div class="lh wb"><span class="bk">✕</span><span class="t">我的主控板</span></div>
+      <div class="wp">
+        <div class="wl">可排時間</div>
+        <div class="wc">
+          <div class="mon"><span>‹</span>2026 年 11 月<span>›</span></div>
+          <p class="sm">點日期切換：<span class="pill ok">整天</span>→<span class="pill ok">上午</span>→<span class="pill ok">下午</span>→<span class="pill bad">不行</span>→ 未回報</p>
+          <div class="cal">
+            <span class="h">日</span><span class="h">一</span><span class="h">二</span><span class="h">三</span><span class="h">四</span><span class="h">五</span><span class="h">六</span>
+            <i>1</i><i class="f">2<small>整天</small></i><i class="f">3<small>整天</small></i><i class="f">4<small>上午</small></i><i class="x">5<small>不行</small></i><i class="f">6<small>整天</small></i><i class="f">7<small>下午</small></i>
+            <i>8</i><i class="f">9<small>整天</small></i><i class="f">10<small>上午</small></i><i class="f">11<small>整天</small></i><i class="x">12<small>不行</small></i><i class="f">13<small>整天</small></i><i>14</i>
+            <i>15</i><i class="f now">16<small>整天</small></i><i>17</i><i>18</i><i>19</i><i>20</i><i>21</i>
+            <i>22</i><i>23</i><i>24</i><i>25</i><i>26</i><i>27</i><i>28</i>
+            <i>29</i><i>30</i>
+          </div>
+          <div class="wbtn" style="margin-top:10px">整個月都可以</div><div class="wbtn">整個月都不確定</div>
+          <div class="fld">其他說明：11/13 之後每週五不行</div>
+          <div class="wbtn tap" style="margin-top:10px">儲存可排時間</div>
+        </div>
+        <div class="wl">我的資料</div>
+        <div class="wc">
+          <div class="sm" style="margin:0">平常可以工作的時間</div>
+          <div class="fld">平日白天、週末都可</div>
+          <div class="sm" style="margin:0">可以服務的區域</div>
+          <div class="fld">大安區、板橋區、中壢區</div>
+          <div class="wbtn">儲存我的資料</div>
+        </div>
+      </div>
+    </div>
+    <p class="cap">📅 選單<b>「可排時間」</b>：每月點哪天可以（整個月都可以／都不確定一鍵按），特別的寫在「其他說明」，按<b>「儲存可排時間」</b>。</p>
+    <p class="cap">⭐ 派工照這裡找人：<b>「我的資料」</b>的平常時間、區域也要保持最新。</p>
+  </section>
+
+  <!-- ⑨ 班表、收入 -->
+  <section class="step" id="s9">
+    <div class="sh"><span class="sn">9</span><h2>看班表和收入</h2></div>
+    <div class="phone web" role="img" aria-label="示意圖：我的主控板，邀請中、我的班表、我的收入">
+      <div class="sb"><span>9:41</span><span class="si"><i></i><i></i><i></i><i></i><b></b></span></div>
+      <div class="lh wb"><span class="bk">✕</span><span class="t">我的主控板</span></div>
+      <div class="wp">
+        <div class="wh" style="font-size:19px">（你的名字），你好</div>
+        <div class="ws">你的工作、班表、可排時間都在這裡。</div>
+        <div class="wl">邀請中 <span class="g">1</span></div>
+        <div class="wc"><b>11/9（一） 13:00–17:00</b><div class="sm" style="margin:2px 0 8px">新北市板橋區・一般到府服務</div>
+          <div class="wbtns"><div class="wbtn">我要接</div><div class="wbtn gray">這次不行</div></div></div>
+        <div class="wl">我的班表 <span class="g">2</span></div>
+        <div class="wc tap" style="border-radius:14px"><b>11/6（五） 09:00–13:00</b><span class="pill ok">已排定</span><div class="sm" style="margin:2px 0 0">臺北市大安區・一般到府服務</div><div class="lnk" style="font-size:11.5px;margin-top:4px">打開工作頁（打卡・拍照）›</div></div>
+        <div class="wc"><b>11/12（四） 09:00–12:00</b><span class="pill">等業主確認</span><div class="sm" style="margin:2px 0 0">彰化縣彰化市・一般到府服務</div></div>
+        <div class="wl">我的收入</div>
+        <div class="wc money"><div><b>10 月</b><div class="sm" style="margin:0">已完工 6 場・約 22 小時・月底結算</div></div><div class="v">$○,○○○</div></div>
+      </div>
+    </div>
+    <p class="cap">📋 選單<b>「我的班表」</b>：邀請中、已排的工作都在這，點一場就打開工作頁。</p>
+    <p class="cap">💵 選單<b>「我的收入」</b>：照打卡實際時數算，只有你看得到，月底結算後匯款。</p>
+  </section>
+
+  <!-- ⑩ 聯絡我們 -->
+  <section class="step" id="s10">
+    <div class="sh"><span class="sn">10</span><h2>有問題，<span data-b="contact">聯絡示範服務店</span></h2></div>
+    <div class="phone" role="img" aria-label="示意圖：按選單聯絡的格子，直接留言，派單同事會回覆">
+      <div class="sb"><span>9:41</span><span class="si"><i></i><i></i><i></i><i></i><b></b></span></div>
+      <div class="lh"><span class="bk">‹</span><span class="t" data-b="full">示範服務店</span><span class="x">☰</span></div>
+      <div class="chat">
+        <div class="me" data-b="contact">聯絡示範服務店</div>
+        <div class="bot">有事直接在這裡留言，<span data-b="full">示範服務店</span>會盡快回覆你 🙏（已通知派單同事）</div>
+        <div class="me">請問明天的案場附近可以停機車嗎？</div>
+      </div>
+      <div class="rm">
+        <div class="rc main"><span class="ic">今</span><b>今天的工作</b><small>打卡・拍照</small></div>
+        <div class="rc"><span class="ic">班</span><b>我的班表</b><small>邀請・已排的工作</small></div>
+        <div class="rc"><span class="ic">可</span><b>可排時間</b><small>回報哪天可以</small></div>
+        <div class="rc"><span class="ic">現</span><b>現場回報</b><small>加時・晚到・狀況</small></div>
+        <div class="rc"><span class="ic">收</span><b>我的收入</b><small>本月場次・預估</small></div>
+        <div class="rc tap"><span class="ic">聯</span><b data-b="contact">聯絡示範服務店</b><small>有問題直接留言</small></div>
+      </div>
+    </div>
+    <p class="cap">💬 按選單<b>「<span data-b="contact">聯絡示範服務店</span>」</b>或直接留言，派單同事會回覆你。</p>
+    <p class="cap">☝️ 卡片按鈕要<b>本人</b>在這個一對一聊天室按，在群組按可能認不出你。</p>
+  </section>
+
+  <footer class="end">
+    <div class="ic">💬</div>
+    <p class="t">有問題直接在官方 LINE 留言</p>
+    <p class="s"><span data-b="full">示範服務店</span>・夥伴使用教學</p>
+  </footer>
+</main>
+<a class="totop" href="#toc">↑ 目錄</a>
+<script src="/wguide.js?v=20261020a"></script>
+<script src="/demo-banner.js"></script>
+</body>
+</html>

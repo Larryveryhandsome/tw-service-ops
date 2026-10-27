@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>合作夥伴應徵表｜示範服務店</title>
+<link rel="icon" href="/brand-favicon-64.png">
+<link rel="stylesheet" href="/style.css?v=20261026a">
+<style>
+  .sec { margin-top: 26px; }
+  .sec h2 { font-size: 19px; margin: 0 0 4px; }
+  .q { margin-top: 18px; }
+  .q > label.ql { display: block; font-weight: 600; margin-bottom: 6px; }
+  .q .req { color: #C62828; font-size: 12px; margin-left: 4px; }
+  .q .hint { font-size: 13px; color: var(--ink2, #6e6e73); margin: -2px 0 8px; }
+  .q textarea, .q input[type=text], .q input[type=tel], .q input[type=url] { width: 100%; }
+  .q .other { margin-top: 8px; }
+  .q.bad > label.ql { color: #C62828; }
+  .notebox { background: #FFF8E6; border-radius: 12px; padding: 10px 12px; font-size: 13px; margin-top: 10px; }
+</style>
+</head>
+<body style="padding-bottom:40px" data-kind="apply">
+<main class="main" style="max-width:600px">
+  <img class="wm book-wm" src="/brand-wordmark.png" alt="示範">
+  <h1 class="headline">合作夥伴應徵表</h1>
+  <p class="sub" id="hi">大部分點一點就好，約 5 分鐘。送出後示範服務店會先看過資料，再在 LINE 邀請你電話面試。</p>
+  <form id="f" class="card" novalidate hidden>
+    <p class="small" id="intro"></p>
+    <div id="qs"></div>
+    <button class="btn full" style="margin-top:22px" type="submit" id="go">提交應徵資料</button>
+    <div id="err" class="err" role="alert"></div>
+  </form>
+  <div id="ok" class="card" hidden><h2 style="margin-top:0">收到了，謝謝你 🙏</h2><p>示範服務店看過資料後，會在 LINE 跟你約電話面試的時間。可以關掉這個頁面回到 LINE。</p></div>
+  <div id="bad" class="card" hidden></div>
+</main>
+<script src="/pdc.js?v=20261019a"></script>
+<script src="/regions.js?v=20261009p"></script>
+<script src="/draft.js?v=20261013a"></script>
+<script src="/apply.js?v=20261025a"></script>
+<script src="/demo-banner.js"></script>
+</body>
+</html>

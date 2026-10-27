@@ -1,0 +1,4 @@
+# Required for the demo and tests (keep this file ASCII-only: older pip on zh-TW Windows reads it as cp950)
+Pillow>=10.0
+qrcode>=7.4
+cryptography>=42.0

@@ -1,0 +1,7 @@
+# Optional extras (ASCII-only on purpose). See README for what each one enables.
+anthropic>=0.40      # AI receipt reading / chat summaries (needs your own Anthropic API key)
+openpyxl>=3.1        # Excel bulk import
+PyMuPDF>=1.24        # split uploaded PDF receipts into pages
+pillow-heif>=0.18    # iPhone HEIC photos
+requests>=2.31       # address geocoding (NLSC)
+certifi              # Web Push HTTPS certificates

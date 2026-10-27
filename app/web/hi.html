@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>留基本資料｜示範服務店</title>
+<link rel="icon" href="/brand-favicon-64.png">
+<link rel="stylesheet" href="/style.css?v=20261026a">
+</head>
+<body style="padding-bottom:40px" data-kind="hi">
+<main class="main" style="max-width:560px">
+  <img class="wm book-wm" src="/brand-wordmark.png" alt="示範">
+  <h1 class="headline">您好 👋</h1>
+  <p class="sub" id="hi">留下稱呼和電話，專人就能馬上幫您處理。</p>
+  <form id="f" class="card" novalidate hidden>
+    <div class="g2"><div><label for="name">怎麼稱呼您</label><input id="name" autocomplete="name"></div><div><label for="phone">手機</label><input id="phone" inputmode="tel" autocomplete="tel"></div></div>
+    <div class="g2"><div><label for="county">縣市</label><select id="county"></select></div><div><label for="area">鄉鎮區</label><select id="area"></select></div></div>
+    <div id="outside" class="banner warn" hidden></div>
+    <label for="need">想詢問什麼？（選填）</label><textarea id="need" rows="3" placeholder="例：30 單位住家想定期整理、剛施工完要細清⋯"></textarea>
+    <button class="btn full" style="margin-top:22px" type="submit" id="go">送出</button>
+    <div id="err" class="err" role="alert"></div>
+  </form>
+  <div id="ok" class="card" hidden><h2 style="margin-top:0">謝謝您 🙏</h2><p>資料收到了！可以回到 LINE 直接留言，或<a href="/book" id="bookLink">線上估價・預約服務</a>。</p><div id="lqc"></div></div>
+  <div id="bad" class="card" hidden></div>
+</main>
+<script src="/lineqr.js?v=20261026a"></script>
+<script src="/pdc.js?v=20261019a"></script>
+<script src="/regions.js?v=20261009p"></script>
+<script src="/draft.js?v=20261013a"></script>
+<script src="/onboard.js?v=20261026a"></script>
+<script src="/demo-banner.js"></script>
+</body>
+</html>

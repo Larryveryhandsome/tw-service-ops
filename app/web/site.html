@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>案場資料｜示範服務店</title>
+<link rel="icon" href="/brand-favicon-64.png">
+<link rel="stylesheet" href="/style.css?v=20261026a">
+</head>
+<body style="padding-bottom:40px">
+<main class="main" style="max-width:600px">
+  <img class="wm book-wm" src="/brand-wordmark.png" alt="示範">
+  <h1 class="headline">案場資料</h1>
+  <p class="sub" id="hi">留一次，之後預約、服務人員到場都更順。</p>
+  <form id="f" class="card" novalidate hidden>
+    <div id="pickBox"><label for="site">要更新哪個地點？</label><select id="site"></select></div>
+    <label for="sname">地點名稱（例：自宅、板橋店家 A 棟）</label><input id="sname">
+    <div class="g2"><div><label for="county">縣市</label><select id="county"></select></div><div><label for="area">鄉鎮區</label><select id="area"></select></div></div>
+    <label for="address">地址</label><input id="address" autocomplete="street-address">
+    <div class="g2"><div><label for="kind">類型</label><select id="kind"><option>公寓／大樓</option><option>透天</option><option>店家</option><option>店面／辦公室</option><option>其他</option></select></div>
+      <div><label for="size">規模</label><input id="size" inputmode="decimal"></div></div>
+    <div class="g3"><div><label for="rooms">房間</label><input id="rooms" inputmode="numeric"></div><div><label for="baths">附屬空間</label><input id="baths" inputmode="numeric"></div><div><label for="floors">樓層／層數</label><input id="floors" inputmode="numeric"></div></div>
+    <div class="chips" style="margin-top:12px"><label><input type="checkbox" id="nolift"> 沒有電梯</label><label><input type="checkbox" id="pets"> 有養寵物</label></div>
+    <label for="entry">進場方式（大樓管理室、密碼鎖、鑰匙放哪⋯）</label><textarea id="entry" rows="2"></textarea>
+    <label for="cname">現場聯絡人（家人、大樓管理員、代管，選填）</label><div style="display:flex;gap:8px"><input id="cname" placeholder="稱呼" style="flex:1"><input id="cphone" inputmode="tel" placeholder="電話" style="flex:1"></div>
+    <select id="crole" style="margin-top:6px"><option>家人</option><option>大樓管理員</option><option>代管／房東</option><option>公司窗口</option><option>其他</option></select>
+    <label for="parking">停車</label><input id="parking" placeholder="例：門口可停機車、附近有收費停車場">
+    <label for="notes">特別注意（易損物品、不要動的地方、過敏⋯）</label><textarea id="notes" rows="3"></textarea>
+    <button class="btn full" style="margin-top:22px" type="submit" id="go">儲存</button>
+    <div id="err" class="err" role="alert"></div>
+  </form>
+  <div id="ok" class="card" hidden><h2 style="margin-top:0">儲存好了，謝謝您 🙏</h2><p>下次預約會更快。<a id="bookGo" href="/book">現在就預約 ›</a></p></div>
+  <div id="bad" class="card" hidden></div>
+</main>
+<script src="/pdc.js?v=20261019a"></script>
+<script src="/regions.js?v=20261009p"></script>
+<script src="/draft.js?v=20261013a"></script>
+<script src="/site.js?v=20261013dr"></script>
+<script src="/demo-banner.js"></script>
+</body>
+</html>

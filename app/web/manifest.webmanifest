@@ -1,0 +1,2 @@
+{"name":"店家營運中樞（示範）","short_name":"DEMO","start_url":"/","display":"standalone","background_color":"#faf9f6","theme_color":"#faf9f6","lang":"zh-Hant",
+ "icons":[{"src":"/brand-192.png","sizes":"192x192","type":"image/png"},{"src":"/brand-512.png","sizes":"512x512","type":"image/png"},{"src":"/brand-maskable-512.png","sizes":"512x512","type":"image/png","purpose":"maskable"}]}

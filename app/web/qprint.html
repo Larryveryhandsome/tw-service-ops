@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>報價單</title>
+<style>
+/* A4 列印版報價單（仿示範服務店樣本）：每頁滿版底色、跨頁自動分頁、金額與分隔線對齊 */
+@page{size:A4;margin:0}
+:root{--ink:#1f1d1a;--sub:#76716a;--pill:#e4e1dc;--val:#e9e6e1;--head:#928e89;--row:#f5f5ef;--line:#dedbd5;
+  --serif:"Noto Serif TC","Source Han Serif TC",serif;--sans:"Noto Sans TC","Microsoft JhengHei",sans-serif;
+  --c1:134px;--c2:375px;--c3:219px;--pr:44px}
+*{box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+html,body{margin:0;padding:0;background:#ddd}
+body{color:var(--ink);font:14.5px/1.6 var(--sans)}
+.page{position:relative;width:794px;height:1123px;overflow:hidden;margin:0 auto;page-break-after:always;break-after:page;
+  background:
+    radial-gradient(330px 300px at 0 0,#f6eddc 0%,rgba(246,237,220,0) 100%),
+    radial-gradient(150px 150px at 742px 158px,#f1e3c9 0%,rgba(241,227,201,.55) 45%,rgba(248,247,245,0) 100%),
+    radial-gradient(520px 230px at 560px 1123px,#f8ecdc 0%,rgba(248,236,220,0) 100%),
+    radial-gradient(260px 200px at 794px 1123px,#fbf1e6 0%,rgba(251,241,230,0) 100%),
+    #f8f7f4}
+.page:last-child{page-break-after:auto;break-after:auto}
+@media screen{.page{margin:20px auto;box-shadow:0 6px 30px rgba(0,0,0,.15)}}
+/* 抬頭 */
+.logo{position:absolute;left:67px;top:56px;height:48px}
+.zh{position:absolute;left:67px;top:118px;font:600 25px/1.2 var(--serif);letter-spacing:.42em}
+.en{position:absolute;left:68px;top:157px;font-size:10.5px;letter-spacing:.34em;color:#8b867f}
+.vbar{position:absolute;left:496px;top:67px;height:107px;border-left:1px solid #d8d4ce}
+.qt{position:absolute;left:526px;top:66px;font-size:9.5px;letter-spacing:.5em;color:#cbc6be}
+.h1{position:absolute;left:526px;top:86px;font:700 59px/1 var(--serif);letter-spacing:.12em}
+.sl{position:absolute;left:526px;top:166px;font-size:9.5px;letter-spacing:.32em}
+.pill{display:inline-block;background:#dcdad7;border-radius:12px;padding:3px 13px;font:600 17.5px/1.5 var(--serif);letter-spacing:.2em}
+.cust{position:absolute;left:58px;top:211px}
+.kv{display:grid;grid-template-columns:79px 15px auto;row-gap:7px;margin:12px 0 0 11px;font-size:14.5px}
+.kv i{font-style:normal;color:#b5b0a9;text-align:center}
+.side{position:absolute;right:47px;top:300px;display:flex;flex-direction:column;align-items:flex-end;gap:9px}   /* 右側一欄：估算人力、報價單編號、日期（以前各自固定位置會壓到表格） */
+.qno{background:var(--pill);border-radius:13px;padding:2px 12px;font-size:13.5px;white-space:nowrap}
+.qno span{letter-spacing:.12em;margin-left:13px;font-size:14.5px}
+.dates{width:181px;border-left:2px solid #d8d4ce;padding-left:10px;font-size:13.5px;line-height:1.55}
+.dates div{display:flex;justify-content:space-between}.dates span{letter-spacing:.12em}
+/* 中段 */
+.flow{position:absolute;left:33px;width:728px;top:412px}
+.tbl{border-radius:12px;overflow:hidden}
+.tr{display:grid;grid-template-columns:var(--c1) var(--c2) var(--c3)}
+.th{background:var(--head);color:#fff;font-size:16px;letter-spacing:.3em;text-align:center}
+.th>div{padding:12px 0;line-height:25px}
+.th>div+div,.td>div+div{border-left:1.5px solid var(--line)}
+.th>div+div{border-left-color:#bdb9b4}
+.td{background:var(--row)}.td+.td{border-top:1.5px solid var(--line)}
+.td>div{padding:10px 0}
+.it{display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding-left:10px!important;padding-right:10px!important;letter-spacing:.1em;font-size:14.5px;line-height:1.55}
+.it .s{color:var(--ink)}
+.sc{display:flex;flex-direction:column;justify-content:center;padding:10px 16px 10px 18px!important;font-size:var(--scfs,14px);line-height:1.6}
+.wrapok .nw{white-space:normal}                       /* 縮到最小字還放不下：才允許詞中間換行 */
+.amt .ln{display:block;white-space:normal;font-size:12px;letter-spacing:.02em;color:var(--sub);line-height:1.45;margin-top:4px;text-align:center}
+.sc .li{display:grid;grid-template-columns:22px 1fr}
+.sc .plain{padding-left:4px;font-size:15px}
+.amt{display:flex;flex-direction:column;justify-content:center;align-items:center;padding-left:10px!important;padding-right:10px!important;font-size:16px;letter-spacing:.16em;white-space:nowrap;font-variant-numeric:tabular-nums}
+/* 金額盒：每格寬度一樣、靠右，盒子在格子內置中 → 金額既置中、右緣又對齊 */
+.ab{display:inline-block;width:var(--bw,auto);text-align:right;white-space:nowrap}
+.num{margin-right:-.16em}
+.sv.tot{letter-spacing:.1em}
+.tot .num{margin-right:calc(-.1em + var(--tadj,-0.9px))}   /* 粗體大字：抵掉字距＋字形外擴，量過右緣才對齊 */
+.sv small.sp,.amt small{display:inline-block;width:var(--uw,0px);font-size:12.5px;letter-spacing:0;color:var(--sub);padding-left:6px;white-space:nowrap;text-align:left;vertical-align:baseline}
+.nw{white-space:nowrap}
+/* 小計＋備註：值的欄位與表格「項目費用」欄完全對齊 */
+.foot{display:grid;grid-template-columns:calc(var(--c1) + var(--c2) - 112px) 112px var(--c3);row-gap:7px;margin-top:12px}
+.note{grid-column:1;grid-row:1/span 6;padding:2px 8px 0 12px;font-size:13.5px;line-height:1.75;letter-spacing:.02em}
+.note .b{display:grid;grid-template-columns:16px 1fr}
+.sl2 .tx{letter-spacing:0;font-size:11px;margin-left:4px;color:#8a847c}
+.sl2{grid-column:2;background:var(--pill);border-radius:12px 0 0 12px;margin-right:1.5px;padding:7px 0 7px 16px;white-space:nowrap;letter-spacing:.2em;font-size:15px}
+.sv{grid-column:3;background:var(--val);border-radius:0 12px 12px 0;padding:7px 10px;text-align:center;letter-spacing:.16em;font-size:16px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.tot{font-size:20px;font-weight:700;padding-top:10px;padding-bottom:10px}
+/* 底部付款資訊（固定在頁尾，空白留在總計與付款資訊之間） */
+.pay{position:absolute;left:58px;top:958px}
+.pay .kv{grid-template-columns:auto 15px auto;margin:12px 0 0 0;font-size:15px;row-gap:5px}
+.loc{position:absolute;left:449px;top:1015px;display:flex;gap:18px;align-items:center}
+.loc b{display:block;font:600 27px/1.3 var(--serif);letter-spacing:.3em}.loc span{letter-spacing:.1em;font-size:14px}
+.pno{position:absolute;left:38px;bottom:16px;font-size:11px;color:#8d8880;letter-spacing:.06em}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+'use strict';
+const Q = window.QDATA;
+const esc = s => String(s ?? '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+const nt = n => `<span class="num">NT $ ${Number(n)}</span>`;   // .num 抵掉最後一字的字距，金額右緣完全對齊
+const ymd = d => (d || '').replaceAll('-', '/');
+const NUM = '①②③④⑤⑥⑦⑧⑨⑩⑪⑫';
+const ZH = ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];
+// 只在標點後換行：同一個詞不會被切開
+let WMAX = 18;
+const wrap = (s, max = WMAX) => String(s).split(/(?<=[、，；。・])/).map(x => x.length > max ? esc(x) : `<span class="nw">${esc(x)}</span>`).join('');   // 太長的片段才允許中間換行
+const kv = rows => rows.filter(r => r[1]).map(([k, v]) => `<b style="font-weight:500">${esc(k)}</b><i>|</i><span>${esc(v)}</span>`).join('');
+const co = Q.company || {}, cu = Q.customer || {};
+const SHORTU = u => String(u || '').length <= 6;              // 單位短（／次、／單位）跟金額同一行；長句放金額下面
+const HASU = Q.items.some(i => i.unit && i.amount && SHORTU(i.unit));
+// 項目名稱分行：【…】整組不拆、3F／1F 這種接在前一段，其他空白照舊分行（客廳 臥室 → 兩行）
+function tlines(it) {
+  const out = [];
+  for (const t of String(it.title || '').split(/\s+/).filter(Boolean).flatMap(x => x.split(/(?<=】)(?=【)/))) {
+    const last = out[out.length - 1], open = last !== undefined && last.lastIndexOf('【') > last.lastIndexOf('】');
+    if (last !== undefined && (open || /^[\x21-\x7e]+$/.test(t))) out[out.length - 1] = last + ' ' + t; else out.push(t);
+  }
+  return it.sub ? out.concat([it.sub]) : out;
+}
+const scopeText = s => String(s).replace(/^\s*(?:\d{1,2}\s*[.、．)）]|[①-⑳])\s*/, '');   // 自己有寫 1. 的不重複編號
+const SEP = i => i.separate;                       // 依當天狀況另計：放最後一頁、不算小計
+{ // 單位欄寬＝最長的單位文字；費用欄寬＝最寬的金額（含總計大字）＋左右間距，剩下給範圍說明
+  const r = document.documentElement.style, cv = document.createElement('canvas').getContext('2d');
+  cv.font = '12.5px "Noto Sans TC","Microsoft JhengHei",sans-serif';
+  const uw = HASU ? Math.ceil(Math.max(...Q.items.filter(i => i.unit && i.amount && SHORTU(i.unit)).map(i => cv.measureText(i.unit).width))) + 8 : 0;
+  r.setProperty('--uw', uw + 'px');
+  const m = document.createElement('div'); m.style.cssText = 'position:absolute;visibility:hidden;left:-9999px';
+  m.innerHTML = Q.items.map(i => `<div class="amt"><span class="ab" style="width:auto">${!i.amount && i.unit ? `<span class="num">${esc(SHORTU(i.unit) ? i.unit : '實支實付')}</span>` : `<span class="num">NT $ ${i.amount}</span>`}</span></div>`).join('')
+    + `<div class="sv tot"><span class="ab" style="width:auto"><span class="num">NT $ ${Q.total}</span></span></div>`;
+  document.body.appendChild(m);
+  const bw = Math.ceil(Math.max(...[...m.querySelectorAll('.ab')].map(e => e.getBoundingClientRect().width))) + uw + 2;
+  m.remove();
+  const c3 = Math.min(260, Math.max(170, bw + 56));                                   // 費用欄最寬 260，範圍說明至少留 290
+  cv.font = '14.5px "Noto Sans TC","Microsoft JhengHei",sans-serif';
+  const pw = Math.max(0, ...Q.items.flatMap(tlines).map(l => cv.measureText(l).width * 1.1));   // 字距 .1em
+  const c1 = Math.min(178, Math.max(134, Math.ceil(pw * 13 / 14.5) + 22));            // 項目欄：最長的一組（13px 放得下）＋間距，134～178
+  const c2 = 728 - c1 - c3; WMAX = Math.max(8, Math.min(18, Math.floor((c2 - 40) / 14.5)));
+  r.setProperty('--bw', bw + 'px'); r.setProperty('--c1', c1 + 'px'); r.setProperty('--c3', c3 + 'px'); r.setProperty('--c2', c2 + 'px'); }
+
+function head() {
+  const hs = (Q.brand || 'demoshop') === 'demoshop';
+  return `${Q.logo ? `<img class="logo" src="${Q.logo}" alt="">` : ''}<div class="zh">${esc(co.name || (hs ? '示範服務店' : ''))}</div><div class="en">${esc(co.tagline || (hs ? 'CLEANER SPACE, BRIGHTER LIFE' : ''))}</div>
+  <div class="vbar"></div><div class="qt">QUOTATION</div><div class="h1">報價單</div><div class="sl">專業服務 · 讓空間回到最好的樣子</div>
+  <div class="cust"><span class="pill">客戶資訊</span><div class="kv">${kv([['公司', cu.company], [cu.company ? '聯絡人' : '客戶', cu.company && cu.name === cu.company ? '' : cu.name], ['連絡電話', cu.phone], ['地址', cu.address], ['統一編號', cu.tax_id]])}</div></div>
+  <div class="side">${Q.crew && Q.crew.hours ? `<div class="qno">估算人力<span>${Q.crew.people} 位 × 約 ${Q.crew.hours} 小時</span></div>` : ''}<div class="qno">報價單編號<span>${esc(Q.no)}</span></div>
+  <div class="dates"><div>報價日期<span>${ymd(Q.date)}</span></div><div>報價期限<span>${ymd(Q.valid_until)}</span></div>${Q.expect ? `<div>期望服務<span>${esc(Q.expect)}（以夥伴確認為準）</span></div>` : ''}</div></div>`;      // 加回期望日期／時段      // 報價單不寫服務日期、時間（內部排班用）
+}
+function row(it) {
+  const lines = tlines(it);
+  const sc = it.scope || [];
+  const scope = sc.length === 1 && /^同上/.test(sc[0]) ? `<div class="plain">${esc(sc[0])}</div>`
+    : sc.map((s, i) => `<div class="li"><span>${NUM[i]}</span><span>${wrap(scopeText(s))}</span></div>`).join('');
+  const u = String(it.unit || ''), su = SHORTU(u);
+  return `<div class="tr td"><div class="it">${lines.map(l => `<div class="nw">${esc(l)}</div>`).join('')}</div><div class="sc">${scope}</div>
+    <div class="amt"><div class="ab">${it.amount === null ? '' : !it.amount && u ? `<span class="num">${esc(su ? u : '實支實付')}</span>` + (HASU ? '<small></small>' : '') : nt(it.amount) + (HASU ? `<small>${su ? esc(u) : ''}</small>` : '')}</div>${u && !su ? `<span class="ln">${esc(u)}</span>` : ''}</div></div>`;   // 金額 0＋單位＝「實支實付」這類；長句單位放金額下面
+}
+const notes = String(Q.note || '').split('\n').map(s => s.trim()).filter(Boolean);
+const noteHtml = () => notes.length ? `<div class="note"><div>備註：</div>${notes.map(n => `<div class="b"><span>・</span><span>${wrap(n)}</span></div>`).join('')}</div>` : '<div class="note"></div>';
+function foot(kind, pageSum, prevSum) {
+  const L = (a, b, t = '') => `<div class="sl2 ${t}">${a}</div><div class="sv ${t}"><div class="ab">${b}${HASU ? '<small class="sp"></small>' : ''}</div></div>`;
+  if (kind === 'mid') return `<div class="foot">${noteHtml()}${L('本頁小計', nt(pageSum))}</div>`;
+  if (kind === 'opt' || kind === 'optmid') return `<div class="foot">${noteHtml()}</div>`;          // 依當天狀況的項目：不列小計
+  let h = prevSum && pageSum ? L('前頁小計', nt(prevSum)) + L('本頁小計', nt(pageSum)) : Q.tax ? L('小計', nt(Q.subtotal)) : '';   // 單頁又沒稅：小計＝總計，只留總計
+  if (Q.tax) h += L('稅額', nt(Q.tax));
+  return `<div class="foot">${noteHtml()}${h}${L(`總計<small class="tx">${Q.tax ? '含稅' : '未稅'}</small>`, nt(Q.total), 'tot')}</div>`;
+}
+function payHtml() {
+  if (!co.bank) return '';
+  return `<div class="pay"><span class="pill">付款資訊</span><div class="kv"><span style="grid-column:1/-1">${esc(co.bank)}</span>${kv([['戶名', co.holder], ['帳號', co.account]])}</div></div>
+  <div class="loc"><svg width="44" height="64" viewBox="0 0 44 64"><path d="M22 2C11 2 2 11 2 22c0 15 20 40 20 40s20-25 20-40C42 11 33 2 22 2z" fill="#d9c7ae"/><circle cx="22" cy="21" r="8" fill="#fff"/></svg>
+  <div><b>${esc(co.name || '')}</b><span>${esc(co.address || '')}</span></div></div>`;
+}
+const root = document.getElementById('root');
+function layoutHead(p) {        // 右側那一欄底部對齊客戶資料最後一列；表格放在兩邊最低的下面（不會再壓到）
+  const top = p.getBoundingClientRect().top, side = p.querySelector('.side'), flow = p.querySelector('.flow');
+  const cb = p.querySelector('.cust').getBoundingClientRect().bottom - top, sh = side.getBoundingClientRect().height;
+  const st = Math.max(200, cb - sh); side.style.top = st + 'px';
+  flow.style.top = (Math.max(cb, st + sh) + 24) + 'px';
+}
+function fitCells(p) {          // 放不下先縮字（語意完整），縮到 11px 還放不下才換行
+  for (const el of p.querySelectorAll('.td .it, .td .sc')) {
+    el.style.fontSize = ''; el.classList.remove('wrapok');
+    let fs = parseFloat(getComputedStyle(el).fontSize);
+    while (el.scrollWidth > el.clientWidth + 1 && fs > 11) { fs -= 0.5; el.style.fontSize = fs + 'px'; }
+    if (el.scrollWidth > el.clientWidth + 1) el.classList.add('wrapok');
+  }
+}
+function page(items, kind, pageSum, prevSum) {
+  const p = document.createElement('section'); p.className = 'page';
+  p.innerHTML = head() + `<div class="flow"><div class="tbl"><div class="tr th"><div>項目</div><div>規格與範圍說明</div><div>項目費用</div></div>${items.map(row).join('')}</div>${foot(kind, pageSum, prevSum)}</div>`
+    + (kind === 'last' || kind === 'opt' ? payHtml() : '') + '<div class="pno"></div>';
+  root.appendChild(p); layoutHead(p); fitCells(p); return p;
+}
+const fits = (p, kind) => p.querySelector('.flow').getBoundingClientRect().bottom - p.getBoundingClientRect().top <= (kind === 'mid' ? 1070 : 940);
+function squeeze(p, kind) {     // 只有一個項目又很長、拆不了頁：整頁範圍說明縮字放進去（不再蓋到付款資訊）
+  for (let fs = 13.5; !fits(p, kind) && fs >= 11; fs -= 0.5) { p.style.setProperty('--scfs', fs + 'px'); fitCells(p); }
+  return p;
+}
+const sum = a => a.reduce((s, x) => s + (x.per_unit || x.separate ? 0 : Number(x.amount || 0)), 0);   // 單價、另計項目不計入小計
+const pages = [];
+function paginate(list, lastKind, prev0) {
+  let rest = list.slice(), prev = prev0;
+  while (rest.length) {
+    let p = page(rest, lastKind, sum(rest), prev);
+    if (fits(p, lastKind)) { pages.push(p); return; }
+    if (rest.length === 1) { pages.push(squeeze(p, lastKind)); return; }
+    p.remove();
+    let n = rest.length - 1;
+    const addon = i => /^加購/.test(rest[i] && rest[i].title || '');     // 連續的加購項目放同一頁
+    while (n > 1 && addon(n) && addon(n - 1)) n--;
+    const mk = lastKind === 'opt' ? 'optmid' : 'mid';
+    while (n > 1) { const t = page(rest.slice(0, n), mk, sum(rest.slice(0, n))); const ok = fits(t, 'mid'); t.remove(); if (ok) break; n--; while (n > 1 && addon(n) && addon(n - 1)) n--; }
+    p = page(rest.slice(0, n), mk, sum(rest.slice(0, n))); if (n === 1) squeeze(p, 'mid'); pages.push(p);
+    prev += sum(rest.slice(0, n)); rest = rest.slice(n);
+  }
+}
+const main = Q.items.filter(i => !SEP(i)), opt = Q.items.filter(SEP);
+if (main.length) paginate(main, 'last', 0);
+if (opt.length) paginate(opt, 'opt', 0);
+pages.forEach((p, i) => {
+  if (!p.querySelector('.pay')) p.querySelector('.note').innerHTML = '';     // 備註只放有付款資訊的頁（總計頁、依當天狀況頁）
+});
+if (pages.length > 1) pages.forEach((p, i) => p.querySelector('.pno').textContent = `第${ZH[i + 1]}頁，共${ZH[pages.length]}頁`);
+document.body.dataset.ready = pages.length;
+</script>
+<script src="/demo-banner.js"></script>
+</body>
+</html>
