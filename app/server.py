@@ -48,6 +48,8 @@ COOKIE = 'demo_session'
 STATIC = re.compile(r'^/([a-z0-9-]+\.(?:js|css|png|jpg|gif|svg|webmanifest))$')      # 加 gif：開發信主視覺動畫
 MONEY_TABLES = ('invoices', 'payments', 'invoice_lines', 'settlements', 'receipts', 'credits', 'receipt_refunds', 'audit')
 
+WORKER_BANK = ('bank_name', 'bank_account', 'bank_holder', 'payout_cycle')      # 服務人員的金流欄位：只有 money 權限看得到、改得到
+
 def backup():
     target = core.DATA / 'backups' / ('operations-' + core.now().replace(':', '-') + '-' + secrets.token_hex(3) + '.db')
     target.parent.mkdir(exist_ok=True)
@@ -141,6 +143,8 @@ def state_for(con, user):
             data[t] = []
         for w in data['workers']:
             w['rate'] = None
+            for k in WORKER_BANK:                  # 資安：銀行帳戶與領薪週期也是金流資料，沒有 money 權限看不到
+                w[k] = None
         for o in data.get('orders', []):
             for k in ('rate', 'approved_amount', 'expense', 'billable_hours', 'hist_income', 'hist_expense', 'hist_salary', 'adjustment', 'original_json'):
                 if k in o: o[k] = None
@@ -1157,7 +1161,7 @@ class Handler(BaseHTTPRequestHandler):
         if route[:2] == ['api', 'save'] and len(route) == 3:
             if 'money' not in acc.CAN.get(user['role'], set()):
                 for k in ('approved_amount', 'adjustment', 'rate', 'worker_rate', 'amount', 'expense', 'visit_price', 'billable_hours', 'billing_rule', 'pricing_note',
-                          'approved_minutes', 'pay_mode', 'billing_mode', 'plan_id'):
+                          'approved_minutes', 'pay_mode', 'billing_mode', 'plan_id') + WORKER_BANK:
                     p.pop(k, None)      # 看不到的欄位也不能改（表單送空白會洗掉原值）
             if route[2] == 'sites' and p.get('entry_mode'):          # 管理層在中控台設定開門方式＝已確認（不再列待補、不再問業主）
                 old_ = core.get(con, 'sites', p['id']) if p.get('id') else {}

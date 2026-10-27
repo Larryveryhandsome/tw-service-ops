@@ -229,6 +229,32 @@ class PermissionTest(unittest.TestCase):
         for path in ('/api/billing', '/api/ledger', '/api/payhist'):
             self.assertEqual(DEMO.get(op, path)[0], 403, path)
 
+    def test_staff_cannot_see_or_change_worker_bank(self):
+        """沒有 money 權限的客服：看不到服務人員的銀行帳戶與領薪週期，用 /api/save 也改不了。"""
+        bank = ('bank_name', 'bank_account', 'bank_holder', 'payout_cycle')
+        adm = DEMO.opener('admin')
+        w_admin = next(w for w in json.loads(DEMO.get(adm, '/api/state')[1])['workers'] if w['id'] == 'wor-demo03')
+        self.assertTrue(w_admin['bank_account'])                       # 管理員看得到（對照組）
+        op = DEMO.opener('staff')
+        st = json.loads(DEMO.get(op, '/api/state')[1])
+        self.assertTrue(st['workers'])
+        for w in st['workers']:
+            for k in bank:
+                self.assertIsNone(w.get(k), (w['id'], k))
+        self.assertNotIn(w_admin['bank_account'], json.dumps(st, ensure_ascii=False))
+        w = next(x for x in st['workers'] if x['id'] == 'wor-demo03')
+        code, r = DEMO.post(op, '/api/save/workers', {'id': w['id'], 'version': w['version'], 'notes': '客服改備註',
+                                                      'bank_name': '壞人銀行', 'bank_account': '9999-999-999999', 'bank_holder': '壞人', 'payout_cycle': 'week'},
+                            csrf=st['csrf'])
+        self.assertEqual(code, 200, r)                                  # 其他欄位照常能改
+        con = sqlite3.connect(DEMO.data / 'operations.db')
+        try:
+            row = con.execute('SELECT notes,bank_name,bank_account,bank_holder,payout_cycle FROM workers WHERE id=?', ('wor-demo03',)).fetchone()
+        finally:
+            con.close()
+        self.assertEqual(row[0], '客服改備註')
+        self.assertEqual(list(row[1:]), [w_admin[k] for k in bank])     # 銀行欄位一個都沒變
+
     def test_worker_portal_needs_valid_token(self):
         op = DEMO.opener()
         self.assertEqual(DEMO.get(op, '/api/public/portal/demo-portal-worker-01')[0], 200)

@@ -4,21 +4,21 @@
 - 目前可見度：**PRIVATE**（待主 session／店長驗收後才決定是否公開）
 - 測試環境：Windows 11；Python 3.10.22、3.12.6、3.14.2；從 git 乾淨 clone 到短路徑、新 venv、照 README 安裝
 - 來源：`商家示範站/generic-app/app` 白名單複製（只讀，來源與線上示範站都沒改、沒停）
-- git 歷史：全新單一初始 commit
+- git 歷史：全新初始 commit＋1 個資安修正 commit（共 2 個；要壓成單一 commit 需要 force push，依協作規則交主 session 決定）
 
 ## 結論先講
 
-**私人 repo 可交付驗收；公開與否由店長決定。** 沒有阻斷項目。第 3 道（真實 LINE／金流沒實測）是示範版的已知限制，要店長接受才算過。
+**私人 repo 可交付驗收；公開與否由店長決定。** 沒有阻斷項目。第 3 道（真實 LINE／金流沒實測）是示範版的已知限制，要店長接受才算過；第 7 道目前 2 個 commit，要不要壓成 1 個由主 session 決定。
 
 | # | 閘門 | 結果 | 一句話 |
 |---|---|---|---|
 | 1 | 需求與設計 | ✅ | 角色權限表、外部服務全關的預設、失效退路寫在 README／SECURITY.md |
-| 2 | 程式本身 | ✅ | 30 項測試全過（3.10／3.12／3.14）；pyflakes 無未定義名稱；pip-audit 0 漏洞 |
+| 2 | 程式本身 | ✅ | 31 項測試全過（3.10／3.12／3.14）；pyflakes 無未定義名稱；pip-audit 0 漏洞 |
 | 3 | 串接 | ⚠️ | 示範版封鎖所有對外連線；LINE、LINE Pay、Google、Anthropic 公開版沒有用真實帳號實測 |
 | 4 | 完成使用者任務 | ✅ | 預約 → 試算 → 送出 → 管理端看得到報價 → 客人看得到報價單；必填空白、缺同意、跨站送出都擋 |
-| 5 | 安全／效能／環境 | ✅ | 服務人員看不到別人資料、越權 API 403、CSRF、Host／Origin 檢查；修掉「知道電話就能冒用服務人員」漏洞 |
+| 5 | 安全／效能／環境 | ✅ | 服務人員看不到別人資料、越權 API 403、CSRF、Host／Origin 檢查；修掉兩個漏洞：「知道電話就能冒用服務人員」、「客服看得到也改得到服務人員銀行帳戶」 |
 | 6 | 資料 | ✅ | 備份 → 完整性檢查 → 拿備份檔實際起 server，資料都在 |
-| 7 | 交付版本 | ✅ | 乾淨 clone＋新 venv 照 README 可裝可測可跑；全新單一初始 commit |
+| 7 | 交付版本 | ⚠️ | 乾淨 clone＋新 venv 照 README 可裝可測可跑；歷史全新但目前 2 個 commit（初始＋資安修正），公開前要不要壓成 1 個由主 session 決定 |
 | 8 | 出事能恢復 | ✅ | 啟動時自動備份到 `data/backups/`；重跑 seed 舊庫改名保留；`--stop` 可停 |
 
 ## 證據
@@ -26,7 +26,7 @@
 ### 第 2 道 程式本身
 | 項目 | 指令 | 結果 |
 |---|---|---|
-| 全部測試 | `python -m unittest discover -s tests -v` | 30 項全過（Python 3.10.22、3.12.6、3.14.2，皆在乾淨 clone＋新 venv） |
+| 全部測試 | `python -m unittest discover -s tests -v` | 31 項全過（Python 3.10.22、3.12.6、3.14.2，皆在乾淨 clone＋新 venv） |
 | CI | `.github/workflows/test.yml` | push／PR 自動跑 Python 3.10、3.12 |
 | 語法相容 | 用 Python 3.10 parse 全部 `app/*.py` | 原本 `seo.py` 有 3.12 才支援的 f-string 寫法 → 已改，3.10 全過 |
 | 前端語法 | `node --check app/web/*.js` | 全過 |
@@ -49,9 +49,12 @@
 | CSRF | 跨站寫入 | 管理員 POST 不帶 `X-CSRF-Token` | 403 | ✅ |
 | 服務人員入口 token | 猜網址 | `/api/public/portal/<亂打>` | 4xx | ✅ |
 | **重新應徵不能冒用身分（本次修的漏洞）** | 冒用 | 陌生 LINE 帳號＋既有服務人員的電話、`reapply_mode=screen`、對方曾被婉拒 | 綁定核准前：不建審資料卡、照片不掛到對方名下、LINE 不綁；改送「是不是本人」確認；管理層按「是本人」後才審資料、掛照片 | ✅ `test_reapply_with_known_phone_cannot_impersonate`；**用修正前的程式跑同一情境會重現漏洞**（screening=1、照片掛到對方名下），修正後擋下 |
+| **客服看不到、改不了服務人員銀行帳戶（本次修的漏洞，HIGH）** | 金流個資外洩／竄改 | staff 讀 `/api/state`；staff 對 `/api/save/workers` 送 bank_name／bank_account／bank_holder／payout_cycle＋備註 | 每位人員這 4 欄都是 null、整包回應找不到帳號；送出後備註有改、銀行 4 欄一個都沒變；管理員照常看得到 | ✅ `test_staff_cannot_see_or_change_worker_bank`；**用修正前的程式跑會失敗**（staff 看到「示範銀行」） |
 | 金鑰 | 外洩 | 讀金鑰的順序；掃 repo | 先讀 `OPS_SECRET_<KEY>`，預設空值；repo 內沒有私鑰／API 金鑰／LINE userId | ✅ |
 
-漏洞說明：`app/worker_portal.py` 原本在電話對到既有服務人員時，就直接 `interviews.screen(con, old['id'], …)` 並把 `worker_files` 掛到 `old['id']`。現在只有送出的 LINE 帳號**已經綁定**這位服務人員（`line_users.worker_id == old['id']`）才直接做；否則先存在 settings `rescreen_wait:<帳號>:<LINE>`，等 `line_bot.decide_bind` 核准綁定時由 `worker_portal.rescreen_after_bind` 補做。
+漏洞說明二：`app/server.py` 的 `state_for` 對沒有 money 權限的角色只清掉 `rate`，`/api/save` 的移除清單也沒有銀行欄位。現在用常數 `WORKER_BANK`（bank_name、bank_account、bank_holder、payout_cycle）兩邊一起處理：讀取時設成 null、寫入時移除。服務人員在自己的手機入口仍看得到、改得到**自己的**銀行資料。
+
+漏洞說明一：`app/worker_portal.py` 原本在電話對到既有服務人員時，就直接 `interviews.screen(con, old['id'], …)` 並把 `worker_files` 掛到 `old['id']`。現在只有送出的 LINE 帳號**已經綁定**這位服務人員（`line_users.worker_id == old['id']`）才直接做；否則先存在 settings `rescreen_wait:<帳號>:<LINE>`，等 `line_bot.decide_bind` 核准綁定時由 `worker_portal.rescreen_after_bind` 補做。
 
 ### 第 6 道 資料
 | 項目 | 做法 | 結果 |
@@ -70,7 +73,7 @@
 | 乾淨 clone 到短路徑、新 venv、`pip install -r requirements.txt`、跑測試 | ✅ 3.10／3.12／3.14 全過 |
 | 乾淨 clone 抓到的問題 | ① 測試掃描誤掃 `.venv` → 改成只掃 repo 內容；② `requirements.txt` 有中文註解，繁中 Windows 的舊版 pip 讀不了（cp950）→ 改成純英文；③ 3.10 語法不相容 → 已修 |
 | 照 README 啟動示範 | `python app/seed_demo.py`＋`python app/demo_server.py`（另用 `DEMO_PORT` 換埠）主要頁面 200，測完用 `--stop` 停掉 |
-| git 歷史 | 全新單一初始 commit；作者為 noreply 身分 |
+| git 歷史 | 全新歷史、沒有舊系統的 commit；作者為 noreply 身分；目前 2 個 commit（初始＋銀行欄位資安修正） |
 
 ### 第 8 道 出事能恢復
 - 錯誤：伺服器錯誤寫進 `data/logs/`（pythonw 背景執行時）與「功能回報」；前端 JS 錯誤每 IP 每小時最多 10 筆收進功能回報。
