@@ -64,11 +64,11 @@ class PagesTest(unittest.TestCase):
         html = body.decode('utf-8')
         self.assertEqual(code, 200)
         self.assertIn('傳統做法', html)
-        self.assertIn('@812ibtir', html)
+        self.assertIn('0928-880-392', html)
 
     def test_ad_bar_kept(self):
         _, body, _ = DEMO.get(DEMO.opener(), '/demo-banner.js')
-        self.assertIn('需要客製化？加 LINE @812ibtir', body.decode('utf-8'))
+        self.assertIn('需要客製化？加 LINE 林其衞（0928-880-392）', body.decode('utf-8'))
 
     def test_admin_pages_after_login(self):
         op = DEMO.opener('admin')

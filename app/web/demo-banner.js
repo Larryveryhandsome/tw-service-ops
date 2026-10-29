@@ -8,7 +8,7 @@
   var st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
   function add() {
     var d = document.createElement('div'); d.id = 'demo-ad-bar';
-    d.innerHTML = '🧪 示範版（資料皆為虛構）｜<b>需要客製化？加 LINE @812ibtir（留白事務所，林其衞）</b>'
+    d.innerHTML = '🧪 示範版（資料皆為虛構）｜<b>需要客製化？加 LINE 林其衞（0928-880-392）</b>'
       + '<button class="x" title="暫時收起" aria-label="暫時收起">✕</button>';
     d.querySelector('.x').onclick = function () { d.style.display = 'none'; document.body.style.paddingBottom = '0'; };
     document.body.appendChild(d);

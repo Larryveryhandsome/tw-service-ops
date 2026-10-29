@@ -3,7 +3,7 @@
 ## 回報漏洞
 
 發現資安問題請**不要**開公開 issue。請到 GitHub 本 repo 的 **Security › Report a vulnerability** 私下回報，
-或加 LINE 官方帳號 @812ibtir 說明（請註明「tw-service-ops 資安」）。原則上 3 個工作天內回覆。
+或加 LINE：林其衞 說明（請註明「tw-service-ops 資安」）。原則上 3 個工作天內回覆。
 
 ## 設計上的安全措施
 
