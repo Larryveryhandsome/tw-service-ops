@@ -16,7 +16,7 @@ import integrations as ix
 def _key(con):
     k = ix.secret(con, 'photo_url_key')
     if not k:
-        k = secrets.token_urlsafe(32); ix.put_secret(con, 'photo_url_key', k)
+        k = secrets.token_urlsafe(32); ix.put_secret(con, 'photo_url_key', k, generated=True)
     return k
 
 def photo_url(con, attachment_id):
@@ -510,6 +510,8 @@ def onboard_token(con, acc, uid, kind):
     return f"{line_bot.BASE_URL}/{'apply' if kind == 'apply' else 'hi'}?t={t}"
 
 def _bind(con, kind, t):
+    if not kind:                     # 網址沒帶 kind：kind[0] 會 IndexError → 500
+        raise PermissionError('連結已過期，請回到 LINE 重新點選')
     b = con.execute('SELECT * FROM line_bind WHERE code=? AND kind=? AND expires>?', (kind[0].upper() + (t or ''), kind, int(time.time()))).fetchone()
     if not b:
         raise PermissionError('連結已過期，請回到 LINE 重新點選')

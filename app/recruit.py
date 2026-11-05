@@ -57,11 +57,14 @@ def shrink(raw):
     import warnings
     if len(raw) > 6 * 1024 * 1024:
         raise ValueError('照片太大，請重新拍或選小一點的')
-    with warnings.catch_warnings():
-        warnings.simplefilter('error', Image.DecompressionBombWarning)
-        with Image.open(io.BytesIO(raw)) as im:
-            im = im.convert('RGB'); im.thumbnail((1600, 1600))
-            out = io.BytesIO(); im.save(out, 'JPEG', quality=82)
+    try:
+        with warnings.catch_warnings():
+            warnings.simplefilter('error', Image.DecompressionBombWarning)
+            with Image.open(io.BytesIO(raw)) as im:
+                im = im.convert('RGB'); im.thumbnail((1600, 1600))
+                out = io.BytesIO(); im.save(out, 'JPEG', quality=82)
+    except (OSError, Image.DecompressionBombWarning, Image.DecompressionBombError):     # 不是照片／壞檔／超大圖：回 400 說明，不是 500
+        raise ValueError('這張照片讀不到（檔案可能壞掉或不是照片），請換一張或用相機重拍') from None
     return Jpeg(out.getvalue())
 
 def save_file(con, kind, raw, worker_id=None, ref='', by='', note=''):
@@ -77,6 +80,7 @@ def files(con, worker_id, kind=None):
 
 def file_get(con, fid, user):
     import accounts
+    ensure(con)                         # 還沒有人上傳過檔案時表不存在（其他函式都有先 ensure）
     r = con.execute('SELECT * FROM worker_files WHERE id=?', (fid or '',)).fetchone()
     if not r:
         raise PermissionError('找不到檔案')

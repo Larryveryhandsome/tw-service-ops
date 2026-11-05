@@ -18,8 +18,8 @@ class Blob(ctypes.Structure):
     _fields_=[('cbData',ctypes.c_uint32),('pbData',ctypes.POINTER(ctypes.c_ubyte))]
 
 def protect(text, decrypt=False):
-    if os.name!='nt':
-        raise RuntimeError('在畫面上儲存金鑰需要 Windows（DPAPI 加密）；Linux／macOS 請改用環境變數 OPS_SECRET_<KEY>，見 docs/金鑰申請.md')
+    if os.name!='nt':                  # ValueError：畫面看得到這段說明（RuntimeError 只會顯示「處理失敗」500）
+        raise ValueError('在畫面上儲存金鑰需要 Windows（DPAPI 加密）；Linux／macOS 請改用環境變數 OPS_SECRET_<KEY>，見 docs/金鑰申請.md')
     raw=base64.b64decode(text) if decrypt else text.encode()
     buf=ctypes.create_string_buffer(raw)
     source=Blob(len(raw),ctypes.cast(buf,ctypes.POINTER(ctypes.c_ubyte))); dest=Blob()
@@ -36,8 +36,14 @@ def protect(text, decrypt=False):
         free.argtypes=[ctypes.c_void_p]; free.restype=ctypes.c_void_p
         free(ctypes.cast(dest.pbData,ctypes.c_void_p))
 
-def put_secret(con,key,value):
-    con.execute('INSERT INTO secrets(key,value) VALUES(?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value',(key,protect(value)))
+PLAIN='plain:'          # DPAPI 加密後是 base64，不會有冒號，跟這個前綴不會撞
+
+def put_secret(con,key,value,generated=False):
+    """generated=True：系統自己產生的隨機簽章金鑰（照片網址、改時間、付款連結的簽章），不是第三方帳號金鑰。
+    Windows 照樣用 DPAPI 加密；Linux／macOS 沒有 DPAPI，存明碼在資料庫（跟資料本身同等保護），不然簽章網址全部 500。
+    第三方金鑰（LINE、LINE Pay、Google、Anthropic）在非 Windows 仍然拒存，請用環境變數 OPS_SECRET_<KEY>。"""
+    v=PLAIN+value if (generated and os.name!='nt') else protect(value)
+    con.execute('INSERT INTO secrets(key,value) VALUES(?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value',(key,v))
 
 def env_secret_name(key):
     """金鑰對應的環境變數名稱：line_token_demoshop → OPS_SECRET_LINE_TOKEN_DEMOSHOP。"""
@@ -50,7 +56,9 @@ def secret(con,key):
     if v:
         return v
     r=con.execute('SELECT value FROM secrets WHERE key=?',(key,)).fetchone()
-    return protect(r[0],True) if r else None
+    if not r:
+        return None
+    return r[0][len(PLAIN):] if r[0].startswith(PLAIN) else protect(r[0],True)
 
 def setting(con,key,default=''):
     r=con.execute('SELECT value FROM settings WHERE key=?',(key,)).fetchone()
