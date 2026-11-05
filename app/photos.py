@@ -7,7 +7,7 @@ from PIL import Image
 import core
 
 def _normalize(raw):
-    """手機原檔（HEIC／HEIF／WEBP、或超過 2000 萬像素）→ 轉成 JPEG 長邊 1600（阿偉手機照片瀏覽器解不開，原檔直接傳上來）。"""
+    """手機原檔（HEIC／HEIF／WEBP、或超過 2000 萬像素）→ 轉成 JPEG 長邊 1600（有些手機的原檔瀏覽器解不開，原檔直接傳上來）。"""
     try:
         import pillow_heif; pillow_heif.register_heif_opener()
     except Exception:
