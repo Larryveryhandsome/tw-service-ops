@@ -723,7 +723,7 @@ def feed_key(con, rotate=False):
     if rotate or not key:
         token = secrets.token_urlsafe(24)
         ix.set_setting(con, 'calendar_feed_hash', hashlib.sha256(token.encode()).hexdigest())
-        ix.put_secret(con, 'calendar_feed_token', token)
+        ix.put_secret(con, 'calendar_feed_token', token, generated=True)
         return token
     return ix.secret(con, 'calendar_feed_token')
 

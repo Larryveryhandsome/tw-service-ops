@@ -318,6 +318,67 @@ class BackupRestoreTest(unittest.TestCase):
         self.assertEqual(DEMO.post(wk, '/api/backup', {}, csrf=csrf)[0], 403)
 
 
+class SignedLinkTest(unittest.TestCase):
+    """簽章網址（改時間、作品集、照片、付款）的金鑰是系統自己產生的：Linux／macOS 沒有 DPAPI 也要能用。"""
+
+    def test_signed_link_works_without_windows(self):
+        code = r'''
+import json, sys
+sys.path.insert(0, sys.argv[1]); import core, reschedule
+con = core.connect()
+oid = con.execute("SELECT id FROM orders WHERE status IN ('review','draft','confirmed') AND date>=date('now','+1 day') ORDER BY date LIMIT 1").fetchone()
+oid = oid[0] if oid else con.execute('SELECT id FROM orders LIMIT 1').fetchone()[0]
+con.execute("UPDATE orders SET status='confirmed', date=date('now','+30 day') WHERE id=?", (oid,))
+s = reschedule.sig(con, oid); con.commit()
+print(json.dumps({'o': oid, 's': s, 's2': reschedule.sig(con, oid)}))
+'''
+        r = subprocess.run([sys.executable, '-c', code, str(APP)], env=env(DEMO.data), capture_output=True, timeout=60, creationflags=NO_WINDOW)
+        self.assertEqual(r.returncode, 0, r.stderr.decode('utf-8', 'replace'))
+        j = json.loads(r.stdout.decode().strip().splitlines()[-1])
+        self.assertEqual(j['s'], j['s2'])                      # 金鑰存起來了：第二次簽出來一樣
+        op = DEMO.opener()
+        code, body, _ = DEMO.get(op, f"/api/public/chg?o={j['o']}&s={j['s']}")
+        self.assertEqual(code, 200, body[:300])
+        self.assertIn('rule', json.loads(body))
+        self.assertEqual(DEMO.get(op, f"/api/public/chg?o={j['o']}&s=0000000000")[0], 403)     # 簽章不對照樣擋
+
+    def test_only_generated_keys_stored_without_dpapi(self):
+        code = r'''
+import sqlite3, sys
+sys.path.insert(0, sys.argv[1]); import integrations as ix
+con = sqlite3.connect(':memory:'); con.execute('CREATE TABLE secrets(key TEXT PRIMARY KEY, value TEXT)')
+ix.put_secret(con, 'photo_url_key', 'abc123', generated=True)
+print(ix.secret(con, 'photo_url_key'))
+try:
+    ix.put_secret(con, 'line_token_demoshop', 'tok'); print('stored')
+except ValueError:
+    print('refused')
+print(con.execute("SELECT COUNT(*) FROM secrets WHERE key='line_token_demoshop'").fetchone()[0])
+'''
+        if os.name == 'nt':
+            self.skipTest('Windows 用 DPAPI，不走明碼')
+        r = subprocess.run([sys.executable, '-c', code, str(APP)], env=env(DEMO.data), capture_output=True, timeout=60, creationflags=NO_WINDOW)
+        self.assertEqual(r.stdout.decode().split(), ['abc123', 'refused', '0'], r.stderr.decode('utf-8', 'replace'))
+
+
+class PublicInputTest(unittest.TestCase):
+    """免登入網址收到缺參數或亂傳的資料：回 4xx 或說明頁，不能 500（500 會灌進功能回報）。"""
+
+    def test_bad_public_requests_are_not_500(self):
+        op = DEMO.opener()
+        for path in ('/api/public/chg', '/api/public/chg?o=x&s=y', '/api/public/onboard', '/pay/police', '/pay/police?i=x&s=y',
+                     '/pay/shop', '/pay/shop?i=x&s=y'):
+            code = DEMO.get(op, path)[0]
+            self.assertLess(code, 500, path)
+        for path, body in (('/api/public/apply/photo', {'content': 'bm90IGFuIGltYWdl'}), ('/api/public/chg', {})):
+            code, j = DEMO.post(op, path, body)
+            self.assertLess(code, 500, (path, j))
+
+    def test_worker_file_missing_is_not_500(self):
+        code = DEMO.get(DEMO.opener('admin'), '/api/worker-file?id=nope')[0]      # 還沒有人上傳過檔案（表還沒建）
+        self.assertEqual(code, 403)
+
+
 class SecretsTest(unittest.TestCase):
     def test_secret_reads_env_first_and_defaults_empty(self):
         code = r'''

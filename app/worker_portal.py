@@ -16,7 +16,7 @@ import integrations as ix
 def _key(con):
     k = ix.secret(con, 'photo_url_key')
     if not k:
-        k = secrets.token_urlsafe(32); ix.put_secret(con, 'photo_url_key', k)
+        k = secrets.token_urlsafe(32); ix.put_secret(con, 'photo_url_key', k, generated=True)
     return k
 
 def photo_url(con, attachment_id):
@@ -319,7 +319,7 @@ def work_action(con, t, act, p):
     raise ValueError('動作不符')
 
 def backfill(con, a, o, u, p):
-    """客戶12：早上中壢做完沒打卡，下午人不在現場 → 定位打卡時間位置都不對。改成自填實際開始／結束時間（不抓定位），
+    """情境：早上做完沒打卡，下午人不在現場 → 定位打卡時間位置都不對。改成自填實際開始／結束時間（不抓定位），
     記成工時（標【補登】），派單管理群收到卡確認；有完成照片就照常送業主確認。"""
     import board, line_bot, workflow
     st, en = str(p.get('start', ''))[:5], str(p.get('end', ''))[:5]
@@ -510,6 +510,8 @@ def onboard_token(con, acc, uid, kind):
     return f"{line_bot.BASE_URL}/{'apply' if kind == 'apply' else 'hi'}?t={t}"
 
 def _bind(con, kind, t):
+    if not kind:                     # 網址沒帶 kind：kind[0] 會 IndexError → 500
+        raise PermissionError('連結已過期，請回到 LINE 重新點選')
     b = con.execute('SELECT * FROM line_bind WHERE code=? AND kind=? AND expires>?', (kind[0].upper() + (t or ''), kind, int(time.time()))).fetchone()
     if not b:
         raise PermissionError('連結已過期，請回到 LINE 重新點選')

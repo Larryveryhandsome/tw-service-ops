@@ -1,27 +1,62 @@
 # tw-service-ops 公開前檢查（RELEASE_CHECK）
 
-- 檢查日：2026-10-27
-- 目前可見度：**PRIVATE**（待主 session／店長驗收後才決定是否公開）
-- 測試環境：Windows 11；Python 3.10.22、3.12.6、3.14.2；從 git 乾淨 clone 到短路徑、新 venv、照 README 安裝
-- 來源：`商家示範站/generic-app/app` 白名單複製（只讀，來源與線上示範站都沒改、沒停）
-- git 歷史：全新初始 commit＋1 個資安修正 commit（共 2 個；要壓成單一 commit 需要 force push，依協作規則交主 session 決定）
+- 最新複查：**2026-11-05**（雲端 Linux 全新環境；前一次 2026-10-27 在 Windows 11）
+- 目前可見度：**PUBLIC**（本次沒有改 repo 設定或可見度）
+- 測試環境（本次）：Linux；Python 3.10.20、3.11.18、3.12.3、3.13.18；從 git 乾淨 clone、每個版本各開新 venv、照 README `pip install -r requirements.txt`
+- 測試環境（前次）：Windows 11；Python 3.10.22、3.12.6、3.14.2
+- 來源：原系統白名單複製（只讀，來源與線上示範站都沒改、沒停）
+- git 歷史：全新歷史；本次修正走 PR，不 force push、不壓 commit
 
 ## 結論先講
 
-**私人 repo 可交付驗收；公開與否由店長決定。** 沒有阻斷項目。第 3 道（真實 LINE／金流沒實測）是示範版的已知限制，要店長接受才算過；第 7 道目前 2 個 commit，要不要壓成 1 個由主 session 決定。
+**可上線。** 本次在 Linux 抓到並修掉 1 個會讓功能整片壞掉的 bug（簽章網址在 Linux／macOS 全部 500）和 3 個輸入錯誤回 500 的小 bug；測試 31 → 35 項，4 個 Python 版本全過。第 3 道（真實 LINE／金流沒實測）仍是示範版已知限制。
 
-| # | 閘門 | 結果 | 一句話 |
+| # | 閘門 | 結果 | 一句話（2026-11-05） |
 |---|---|---|---|
-| 1 | 需求與設計 | ✅ | 角色權限表、外部服務全關的預設、失效退路寫在 README／SECURITY.md |
-| 2 | 程式本身 | ✅ | 31 項測試全過（3.10／3.12／3.14）；pyflakes 無未定義名稱；pip-audit 0 漏洞 |
-| 3 | 串接 | ⚠️ | 示範版封鎖所有對外連線；LINE、LINE Pay、Google、Anthropic 公開版沒有用真實帳號實測 |
-| 4 | 完成使用者任務 | ✅ | 預約 → 試算 → 送出 → 管理端看得到報價 → 客人看得到報價單；必填空白、缺同意、跨站送出都擋 |
-| 5 | 安全／效能／環境 | ✅ | 服務人員看不到別人資料、越權 API 403、CSRF、Host／Origin 檢查；修掉兩個漏洞：「知道電話就能冒用服務人員」、「客服看得到也改得到服務人員銀行帳戶」 |
-| 6 | 資料 | ✅ | 備份 → 完整性檢查 → 拿備份檔實際起 server，資料都在 |
-| 7 | 交付版本 | ⚠️ | 乾淨 clone＋新 venv 照 README 可裝可測可跑；歷史全新但目前 2 個 commit（初始＋資安修正），公開前要不要壓成 1 個由主 session 決定 |
+| 1 | 需求與設計 | ✅ | 角色權限表、外部服務全關的預設、失效退路寫在 README／SECURITY.md；本次補上「非 Windows 的系統簽章金鑰怎麼存」 |
+| 2 | 程式本身 | ✅ | 35 項測試全過（3.10／3.11／3.12／3.13）；pyflakes 0 個未定義名稱；`node --check` 全過；pip-audit 0 漏洞 |
+| 3 | 串接 | ⚠️ | 示範版封鎖所有對外連線；LINE、LINE Pay、Google、Anthropic 沒有用真實帳號實測（雲端環境也碰不到） |
+| 4 | 完成使用者任務 | ✅ | 預約 → 試算 → 送出 → 管理端看得到報價 → 客人看得到報價單；**本次修好**：業主改時間連結在 Linux／macOS 打得開 |
+| 5 | 安全／效能／環境 | ✅ | 越權、CSRF、Host／Origin 照舊全擋；全部 55 個 GET、148 個 POST 路由用 4 種身分打一輪：修正前 24 個 500，修正後 0 個 |
+| 6 | 資料 | ✅ | 備份 → 完整性檢查 → 拿備份檔實際起 server，資料都在（`test_backup_then_restore`） |
+| 7 | 交付版本 | ✅ | 乾淨 clone＋新 venv 照 README 可裝可測可跑；seed → 啟動 → 12 個主要網址 200 → `--stop` 停掉 |
 | 8 | 出事能恢復 | ✅ | 啟動時自動備份到 `data/backups/`；重跑 seed 舊庫改名保留；`--stop` 可停 |
 
-## 證據
+## 2026-11-05 複查（Linux 全新環境）
+
+### 本次修的 bug
+| # | 問題 | 重現（修正前） | 修正 | 證據 |
+|---|---|---|---|---|
+| 1 | **Linux／macOS 上所有簽章網址 500**：照片網址、業主改時間、作品集、付款、退訂連結共用的簽章金鑰第一次產生時要存資料庫，`integrations.protect` 沒有 DPAPI 就丟 RuntimeError | `GET /api/public/chg?o=<單號>&s=<正確簽章>` → 500；`/pay/police`、`/pay/shop` 不帶參數也 500 | `put_secret(..., generated=True)`：只有系統自己產生的隨機簽章金鑰（`photo_url_key`、`calendar_feed_token`）在非 Windows 存明碼（`plain:` 前綴）；第三方金鑰在非 Windows 照樣拒存，並改丟 ValueError（畫面看得到「請改用環境變數」的說明，不再是 500） | `test_signed_link_works_without_windows`（正確簽章 200、錯誤簽章 403）、`test_only_generated_keys_stored_without_dpapi` |
+| 2 | `/api/public/onboard` 沒帶 `kind` → `kind[0]` IndexError 500 | `GET /api/public/onboard` → 500 | 沒帶 kind 回 403「連結已過期」 | `test_bad_public_requests_are_not_500` |
+| 3 | 應徵照片上傳不是圖片 → PIL 例外 500 | `POST /api/public/apply/photo {"content":"<非圖片>"}` → 500 | `recruit.shrink` 讀不出來回 400「這張照片讀不到…」 | 同上 |
+| 4 | 還沒人上傳過夥伴檔案時 `/api/worker-file` → `no such table` 500 | 管理員 `GET /api/worker-file?id=x` → 500 | `file_get` 先 `ensure` 建表，找不到回 403 | `test_worker_file_missing_is_not_500` |
+
+**用修正前的程式跑新測試**：4 項全部 FAIL；修正後 35 項全過。
+
+### 指令與結果
+| 項目 | 指令 | 結果 |
+|---|---|---|
+| 全部測試（修正前） | `python -m unittest discover -s tests -v` | 31 項全過（3.10.20／3.11.18／3.12.3／3.13.18）——但現有測試沒有涵蓋簽章網址，所以 bug 1 沒被抓到 |
+| 全部測試（修正後） | 同上，乾淨 clone＋新 venv | **35 項全過**（3.10.20／3.11.18／3.12.3／3.13.18） |
+| 路由掃描 | 自寫爬蟲：admin／staff／worker／未登入各打 55 個 GET、148 個 POST（空 body），另打 `/api/save/*` 與各種壞 token 網址 | 修正前 25 個 500 → 修正後 0 個 |
+| 靜態檢查 | `pyflakes app tests` | 0 個未定義名稱；其餘為沒用到的 import／變數等無害提示 |
+| 前端語法 | `node --check app/web/*.js` | 全過 |
+| 3.10 語法 | 用 3.10 `ast.parse` 全部 `app/*.py` | 全過 |
+| 相依套件漏洞 | `pip-audit -r requirements.txt`、`-r requirements-optional.txt` | No known vulnerabilities found |
+| 照 README 啟動 | `seed_demo.py` → `demo_server.py`（`DEMO_PORT`）→ `--stop` | 12 個主要網址 200；停止後連不到 |
+
+### 去識別化（本次）
+| 項目 | 結果 |
+|---|---|
+| 本次 diff 新增的電話、email、網址、IP | 0 筆 |
+| 全 repo 電話 | 只有虛構 `0900-000-xxx`、欄位提示 `0912-345-678`、刻意保留的客製化廣告電話 |
+| 全 repo email、私鑰、API 金鑰、LINE userId | 0 筆 |
+| IP | 只有 `127.0.0.1`、`1.1.1.1`（測試對外封鎖）、`203.0.113.9`（RFC 5737 文件用位址） |
+| 殘留的夥伴暱稱 | 程式註解 5 處、畫面範例 1 處（派工流程說明）→ 改成「指定夥伴」等中性說明 |
+| 客戶代號 | 註解裡的 `客戶01`～`客戶03` 是前次已代號化的結果，保留 |
+
+## 證據（2026-10-27，Windows）
 
 ### 第 2 道 程式本身
 | 項目 | 指令 | 結果 |
@@ -87,7 +122,7 @@
 | 關鍵字 grep：品牌、負責人、內部網域、固定 IP、私鑰、真實 LINE userId、清潔類字樣、內部客戶名 | 0 筆 |
 | 內部營運對話註解（「10/14 店長：…」、回報編號 R10xxxx） | 約 400 處改寫成中性技術說明；寫死真實客戶 id、真實客戶名的一次性程式分支已移除 |
 | 內部識別 | 品牌代碼改中性（`homeline`／`bizline`）；環境變數改 `OPS_*`；本機模型路徑、真實 LINE 加好友短網址、伺服器 IP 移除 |
-| `deep_audit.py` 剩下的命中（全部判讀） | `velo`＝「De**velo**pers」字串誤判；`泰山`、`池上`＝行政區名；手機號碼＝虛構 `0900-000-xxx` 與欄位提示 `0912-345-678`；`留白`／`林其衞`＝NOTICE、README、畫面底部的客製化廣告（刻意保留） |
+| `deep_audit.py` 剩下的命中（全部判讀） | 英文字串片段誤判；行政區名誤判；手機號碼＝虛構 `0900-000-xxx` 與欄位提示 `0912-345-678`；NOTICE、README、畫面底部的客製化廣告（刻意保留） |
 
 ## ⚠️ 已知問題（寫在 README）
 - 真實 LINE、LINE Pay、Google、Anthropic、Web Push 沒有用真實帳號實測。
@@ -97,6 +132,7 @@
 - 角色代碼 `cleaner` 等英文識別字沿用原程式。
 
 ## 發布決定
-- [x] 推到 GitHub 私人 repo
+- [x] 推到 GitHub
+- [x] 改成 public（本次複查時已是 public）
+- [x] 2026-11-05 Linux 全新環境複查（本 PR）
 - [ ] 店長驗收（第 3 道已知限制是否接受）
-- [ ] 改成 public（只由主 session 依店長決定執行）
